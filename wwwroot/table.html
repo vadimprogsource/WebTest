@@ -1,0 +1,156 @@
+﻿<table class="table" id="forkliftTable">
+    <thead>
+        <tr>
+            <th>Идентификатор</th>
+            <th>Бренд</th>
+            <th>Номер</th>
+            <th>Грузоподъёмность (т)</th>
+            <th>Активен</th>
+            <th>Дата изменения</th>
+            <th>Кем изменено</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each forklifts}}
+        <tr>
+            <td>{{Id}}</td>
+            <td>{{Brand}}</td>
+            <td>{{Number}}</td>
+            <td>{{Capacity}}</td>
+            <td>{{#if IsActive}}Да{{else}}Нет{{/if}}</td>
+            <td>{{ModifiedAt}}</td>
+            <td>{{ModifiedBy}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script>
+    const Handlebars = require('handlebars');
+
+    // Регистрируем хелпер для форматирования даты в формате "дд.мм.гггг чч:мм"
+    Handlebars.registerHelper('formatDate', function (dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    });
+</script>
+
+
+<script>document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/api/forklifts');
+            const data = await response.json();
+
+            const source = document.getElementById('forklift-table-template').innerHTML;
+            const template = Handlebars.compile(source);
+            const html = template({ forklifts: data });
+
+            document.getElementById('forklift-table-container').innerHTML = html;
+        } catch (error) {
+            console.error('Ошибка загрузки данных:', error);
+        }
+    });</script>
+
+<script>
+    function getFormData(form) {
+        const data = {};
+        const elements = form.elements;
+
+        for (let i = 0; i < elements.length; i++) {
+            const el = elements[i];
+            if (!el.name || el.disabled) continue;  // игнорируем без имени или отключённые
+
+            switch (el.type) {
+                case 'checkbox':
+                    data[el.name] = el.checked;
+                    break;
+                case 'radio':
+                    if (el.checked) data[el.name] = el.value;
+                    break;
+                case 'number':
+                    data[el.name] = el.value ? parseFloat(el.value) : null;
+                    break;
+                case 'datetime-local':
+                    data[el.name] = el.value || null;
+                    break;
+                default:
+                    data[el.name] = el.value;
+            }
+        }
+
+        return data;
+    }
+
+    // Использование при отправке формы:
+    document.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const data = getFormData(form);
+
+        try {
+            const response = await fetch(form.action, {
+                method: form.method || 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Данные успешно сохранены!');
+                form.reset();
+            } else {
+                const err = await response.text();
+                alert('Ошибка: ' + err);
+            }
+        } catch (error) {
+            alert('Ошибка запроса: ' + error.message);
+        }
+    });
+
+
+
+    function search(text) {
+        const token = localStorage.getItem('jwtToken'); // Чтение токена из localStorage
+
+        fetch('/api/forklifts/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Добавляем токен в заголовок
+            },
+            body: JSON.stringify({ query: text })
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("HTTP error " + response.status);
+                return response.json();
+            })
+            .then(data => {
+                const tbody = document.querySelector("#forkliftTable tbody");
+                tbody.innerHTML = ""; // Очистка таблицы
+                data.forEach(forklift => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+        <td>${forklift.id}</td>
+        <td>${forklift.brand}</td>
+        <td>${forklift.number}</td>
+        <td>${forklift.capacity.toFixed(3)}</td>
+        <td>${forklift.isActive ? 'Yes' : 'No'}</td>
+        <td>${new Date(forklift.modifiedAt).toLocaleString()}</td>
+        <td>${forklift.modifiedBy}</td>
+      `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error("Search failed:", error);
+            });
+    }
+
+</script>
