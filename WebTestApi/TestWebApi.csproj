@@ -16,6 +16,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Models\" />
+    <None Remove="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="wwwroot\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Test.Api\Test.Api.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
@@ -28,17 +40,5 @@
     <ProjectReference Include="..\Test.Repository\Test.Repository.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Models\" />
-    <None Remove="Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="wwwroot\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="wwwroot\" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Infrastructure\" />
+    <None Remove="Domain\" />
+    <None Remove="Domain\Mapping\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Domain\" />
+    <Folder Include="Domain\Mapping\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Test.Api\Test.Api.csproj" />
+    <ProjectReference Include="..\Test.Entity\Test.Entity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+  </ItemGroup>
+</Project>
