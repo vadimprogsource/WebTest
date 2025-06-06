@@ -20,21 +20,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 builder.Services.AddScoped<IAuthProvider, AuthProvider>();
-
 builder.Services.AddScoped<IDataRepository<User>, UserRepository>();
 builder.Services.AddScoped<IDataRepository<UserSession>, UserSessionRepository>();
 builder.Services.AddScoped<IDataRepository<ForkLift>, ForkLiftRepository>();
 builder.Services.AddScoped<IDataRepository<ForkFault>, ForkFaultRepository>();
-
 builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataAccessProvider>();
 builder.Services.AddScoped<IDataAccessProvider<IForkLift>, ForkLiftDataAccessProvider>();
-
 builder.Services.AddScoped<IDataFactory<IForkFault>, ForkFaultDataAccessProvider>();
 builder.Services.AddScoped<IDataAccessProvider<IForkFault>, ForkFaultDataAccessProvider>();
-
 builder.Services.AddSingleton<IDataValidator<IForkLift>, ForkLiftDataValidator>();
 builder.Services.AddSingleton<IDataValidator<IForkFault>, ForkFaultDataValidator>();
 
