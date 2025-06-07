@@ -38,8 +38,8 @@ builder.Services.AddSingleton<IDataValidator<IForkFault>, ForkFaultDataValidator
 
 
 
-builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql")));
-//builder.Services.AddDbContext<ForkDbContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("msSql")));
+//builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql")));
+builder.Services.AddDbContext<ForkDbContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("msSql")));
 
 
 //builder.Services.AddDbContext<ForkDbContext>(options =>options.UseMySQL(builder.Configuration.GetConnectionString("mySql")));
