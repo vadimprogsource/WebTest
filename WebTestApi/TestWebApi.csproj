@@ -23,9 +23,11 @@
     <Folder Include="Models\" />
     <Folder Include="wwwroot\" />
     <Folder Include="Services\" />
+    <Folder Include="wwwroot\react\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\" />
+    <Content Remove="wwwroot\react\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Test.Api\Test.Api.csproj">

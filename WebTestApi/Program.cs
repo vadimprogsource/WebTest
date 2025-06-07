@@ -10,6 +10,7 @@ using Test.Entity.Domain;
 using Test.Repository.Domain;
 using Microsoft.OpenApi.Models;
 using TestWebApi.Services;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,18 @@ builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builde
 
 
 //builder.Services.AddDbContext<ForkDbContext>(options =>options.UseMySQL(builder.Configuration.GetConnectionString("mySql")));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod(); // Важно!
+    });
+});
+
+
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -101,7 +114,7 @@ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || true)
 {
 
    
@@ -115,5 +128,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.UseStaticFiles();
 
+app.UseStaticFiles();
+
+app.UseCors("AllowAll");
+app.Run();

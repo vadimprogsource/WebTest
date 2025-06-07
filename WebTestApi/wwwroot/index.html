@@ -51,7 +51,7 @@
 <body>
     <div class="header d-flex align-items-center justify-content-between">
         <span class="fs-5">Справочник погрузчиков</span>
-        <button class="btn btn-light">Профиль</button>
+        <button class="btn btn-light" onclick="signOut()">Профиль</button>
     </div>
     <div class="container-fluid">
         <div class="row">
@@ -111,7 +111,7 @@
                         </div>
                     </div>
                     <div class="col-md-6" >
-                        <h6>Протокол по погрузчику <b><span id="ownerNbr">4565 PH-1</span></b></h6>
+                        <h6>Протокол по погрузчику <b><span id="ownerNbr"></span></b></h6>
                         <button class="btn btn-custom-red btn-sm mb-2" onclick="newFailure()">Добавить</button>
                         <div class="table-wrapper">
                             <table class="table table-bordered table-sm" id="faultTable">
@@ -358,6 +358,18 @@
             const data = await response.json(); 
             return data;           
 
+        }
+
+        async function signOut()
+        {
+            try
+            {
+                fetchRest("POST", "auth/signout");
+                localStorage.removeItem('jwt');
+                 
+            }
+            catch { }
+            window.location.reload();
         }
 
         function getFormData(form) {

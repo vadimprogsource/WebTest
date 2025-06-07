@@ -7,6 +7,7 @@ using Test.Api.Domain;
 namespace TestWebApi.Controllers;
 
 [Route("db")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class DataBaseController : ControllerBase
 {
     private readonly ForkDbContext dbContext;
