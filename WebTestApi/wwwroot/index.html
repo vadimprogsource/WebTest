@@ -264,19 +264,6 @@
     <script>document.addEventListener('DOMContentLoaded', function () {
 
 
-    flatpickr("#problemDetectedAt", {
-        enableTime: true,
-        dateFormat: "d.m.Y H:i",
-        time_24hr: true,
-        locale: "ru"
-    });
-
-    flatpickr("#problemResolvedAt", {
-        enableTime: true,
-        dateFormat: "d.m.Y H:i",
-        time_24hr: true,
-        locale: "ru"
-    });
 
                 const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                 loginModal.show();
@@ -335,21 +322,30 @@
         }
 
         function parseToISO(dateStr)
+
         {
-            // Пример входной строки: "06.06.2025 02:34"
-            const [datePart, timePart] = dateStr.split(' '); // ['06.06.2025', '02:34']
-            const [day, month, year] = datePart.split('.');  // ['06', '06', '2025']
-            const [hours, minutes] = timePart.split(':');    // ['02', '34']
+            try
+            {
+                
+                const [datePart, timePart] = dateStr.split(' '); 
+                const [day, month, year] = datePart.split('.');  
+                const [hours, minutes] = timePart.split(':');    
+                const isoDate = new Date(
+                    Number(year),      // Год
+                    Number(month) - 1, // Месяц (от 0)
+                    Number(day),       // День
+                    Number(hours),
+                    Number(minutes)
+                );
+                return isoDate.toISOString(); 
 
-            const isoDate = new Date(
-                Number(year),      // Год
-                Number(month) - 1, // Месяц (от 0)
-                Number(day),       // День
-                Number(hours),
-                Number(minutes)
-            );
+            }
+            catch
+            {
+                return null; 
+            }
 
-            return isoDate.toISOString(); // Вернёт в формате ISO
+            
         }
 
         async function fetchRestApi(method, url, body)
@@ -398,7 +394,7 @@
                     case 'number':
                         data[el.name] = el.value ? parseFloat(el.value) : null;
                         break;
-                    case 'datetime-local':
+                    case 'datetime':
                         data[el.name] = el.value || null;
                         break;
                     default:
@@ -437,7 +433,7 @@
 
                 if (type === 'datetime' || input.dataset.type==='datetime')
                 {
-                    input.value = formatDateTime(value);
+                    if (value && value !== 'null') input.value = formatDateTime(value); else input.value = '';
                     continue;
                 }
 
@@ -467,10 +463,10 @@
 
             try
             {
-                await fetchRestApi(form.dataset.formMethod, form.action, getFormData(form));
+                const data = await fetchRestApi(form.dataset.formMethod, form.action, getFormData(form));
                 if (form.callBack)
                 {
-                    form.callBack();
+                    form.callBack(data);
                 }
 
                 const modal = form.closest(".modal");
@@ -489,12 +485,17 @@
         }
 
 
-        async function searchFork(text) {
+        async function searchFork(text,x) {
           
 
             try {
              
                 const data = await fetchRestApi('POST', '/fork/lift',{ searchPattern: text, maxCount: 100 });
+
+                if (!x && data && data.length)
+                {
+                    x = data[0];
+                }
 
                 clearDetails();
                 const tbody = document.querySelector("#forkliftTable tbody");
@@ -504,6 +505,9 @@
                     const forklift = data[i];
                     const row = document.createElement("tr");
                     row.ctx = { id: forklift.id, number: forklift.number };
+
+                    if (forklift.id == x.id) row.classList.add("active"); 
+
                     row.onclick = function ()
                     {
                         loadDetails(this.ctx.id, this.ctx.number);
@@ -533,10 +537,18 @@
       `;
                     tbody.appendChild(row);
                 }
-            } catch (error) {
+
+            } catch (error)
+            {
                 console.error("Search failed:", error);
                 alert("Ошибка при выполнении запроса: " + error.message);
             }
+
+            if (x)
+            {
+                await loadDetails(x.id, x.number);
+            }
+          
         }
 
 
@@ -544,6 +556,9 @@
         {
             const tbody = document.querySelector("#faultTable tbody");
             tbody.innerHTML = "";
+            const num = document.getElementById("ownerNbr");
+            num.innerHTML = "";
+            num.ownerId = undefined;
         }
 
 async function loadDetails(ownerId,ownerNbr) {
@@ -629,27 +644,27 @@ async function loadDetails(ownerId,ownerNbr) {
            }
         }  
 
-        function refreshFork()
+        function refreshFork(x)
         {
-            searchFork(document.getElementById('searchPatter').value);
+            searchFork(document.getElementById('searchPatter').value,x);
         }
 
         async function newFork()
         {
-            await showEdit("fork/lift/new", "addLoaderModal", "PUT", "fork/lift", () => refreshFork());
+            await showEdit("fork/lift/new", "addLoaderModal", "PUT", "fork/lift", x => refreshFork(x));
         }
 
         async function editFork(id)
         {
-            await showEdit("fork/lift/" + id, "addLoaderModal", "PATCH", "fork/lift", () => refreshFork());
+            await showEdit("fork/lift/" + id, "addLoaderModal", "PATCH", "fork/lift", x => refreshFork(x));
         }
 
         async function deleteFork(id)
         {
-            await del ("fork/lift/" + id, () => refreshFork());
+            await del ("fork/lift/" + id, x => refreshFork(x));
         }
 
-        function refreshForkFailure()
+        function refreshForkFailure(x)
         {
             const numb = document.getElementById("ownerNbr");
             loadDetails(numb.ownerId, numb.innerHTML);
@@ -664,7 +679,7 @@ async function loadDetails(ownerId,ownerNbr) {
                 const ownerId = numb.ownerId;
                 if (ownerId)
                 {
-                    await showEdit("fork/lift/fault/new/" + ownerId, "addProtocolModal", "PUT", "fork/lift/fault/" + ownerId, () => refreshForkFailure());
+                    await showEdit("fork/lift/fault/new/" + ownerId, "addProtocolModal", "PUT", "fork/lift/fault/" + ownerId, x => refreshForkFailure(x));
                 }
             }
           
@@ -672,12 +687,12 @@ async function loadDetails(ownerId,ownerNbr) {
 
         async function editFailure(id)
         {
-            await showEdit("fork/lift/fault/" + id, "addProtocolModal", "PATCH", "fork/lift/fault/", () => refreshForkFailure());
+            await showEdit("fork/lift/fault/" + id, "addProtocolModal", "PATCH", "fork/lift/fault/", x => refreshForkFailure(x));
         }
 
         async function deleteFailure(id)
         {
-            await del("fork/lift/fault/" + id, () => refreshForkFailure());
+            await del("fork/lift/fault/" + id, () => refreshForkFailure(null));
         }
 
 
