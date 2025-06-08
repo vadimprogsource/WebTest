@@ -15,6 +15,21 @@ namespace TestWebApi.Controllers
         {
         }
 
+
+        [HttpPatch("active/{id}/{flag}")]
+        public async Task<IActionResult> SetActive([FromRoute] int id, [FromRoute] string flag)
+        {
+            if (Provider is IForkDataAccessProvider provider)
+            {
+                IForkLift fork = await provider.UpdateIsActiveAsync(id, string.Compare(flag, "on", true) == 0 || string.Compare(flag, "true", true) == 0);
+                return Ok(ToModel(fork));
+            }
+
+            return NoContent();
+        }
+
+
+
         protected override ForkLiftModel ToModel(IForkLift entity) => new(entity);
         
     }

@@ -59,7 +59,7 @@ namespace TestWebApi.Controllers
                 return Ok(ToModel(entity));
             }
 
-            return BadRequest("CreateInvalidateError");
+            return BadRequest(ErrorModel.Create(Validator.Errors));
 
         }
 
@@ -72,7 +72,7 @@ namespace TestWebApi.Controllers
                 return Ok(ToModel(entity));
             }
 
-            return BadRequest("UpdateInvalidateError");
+            return BadRequest(ErrorModel.Create(Validator.Errors));
         }
 
         [HttpDelete("{id}")]

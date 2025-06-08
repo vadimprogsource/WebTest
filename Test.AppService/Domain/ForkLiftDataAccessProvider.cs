@@ -6,7 +6,7 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain
 {
-    public class ForkLiftDataAccessProvider : DataAccessProvider<IForkLift, ForkLift> , IDataFactory<IForkLift>
+    public class ForkLiftDataAccessProvider : DataAccessProvider<IForkLift, ForkLift> , IDataFactory<IForkLift> , IForkDataAccessProvider
     {
 
 
@@ -42,8 +42,19 @@ namespace Test.AppService.Domain
         public override Task<ForkLift> OnUpdateAsync(IForkLift source, ForkLift entity) => UpdateModifiedAsync(entity.Update(source));
 
         public async Task<IForkLift> CreateInstanceAsync(int ownerId = 0)=> await UpdateModifiedAsync(new ForkLift());
-        
-        
+
+        public async Task<IForkLift> UpdateIsActiveAsync(int id, bool active)
+        {
+            ForkLift obj = await Repository.SelectAsync(id);
+
+            if (obj.IsActive != active)
+            {
+                obj.IsActive = active;
+                obj = await Repository.UpdateAsync(await UpdateModifiedAsync(obj));
+            }
+
+            return obj;
+        }
     }
 }
 

@@ -33,16 +33,22 @@ builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataAccessProvider>(
 builder.Services.AddScoped<IDataAccessProvider<IForkLift>, ForkLiftDataAccessProvider>();
 builder.Services.AddScoped<IDataFactory<IForkFault>, ForkFaultDataAccessProvider>();
 builder.Services.AddScoped<IDataAccessProvider<IForkFault>, ForkFaultDataAccessProvider>();
-builder.Services.AddSingleton<IDataValidator<IForkLift>, ForkLiftDataValidator>();
-builder.Services.AddSingleton<IDataValidator<IForkFault>, ForkFaultDataValidator>();
+builder.Services.AddScoped<IDataValidator<IForkLift>, ForkLiftDataValidator>();
+builder.Services.AddScoped<IDataValidator<IForkFault>, ForkFaultDataValidator>();
 
 
 
-//builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql")));
-builder.Services.AddDbContext<ForkDbContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("msSql")));
+switch (builder.Configuration.GetConnectionString("dbServer"))
+{
+    case "pgSql":  builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql")));break;
+    case "mySql": //builder.Services.AddDbContext<ForkDbContext>(options =>options.UseMySQL(builder.Configuration.GetConnectionString("mySql")));
+                  break;
+    default: builder.Services.AddDbContext<ForkDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("msSql")));break;
+}
 
 
-//builder.Services.AddDbContext<ForkDbContext>(options =>options.UseMySQL(builder.Configuration.GetConnectionString("mySql")));
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -116,9 +122,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || true)
 {
-
-   
-
     app.UseSwagger();
     app.UseSwaggerUI();
 }

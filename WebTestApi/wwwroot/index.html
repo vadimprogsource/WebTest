@@ -12,11 +12,19 @@
             background-color: #f8f9fa;
         }
 
-       .active {
-            background-color: silver;
+
+
+        #forkliftTable tbody tr.active td {
+            background-color: #d0ebff !important;
             font-weight:bold;
+
         }
-   
+
+           
+            #forkliftTable tbody tr.active:hover {
+                background-color: #d0ebff !important;
+            }
+        
         .sidebar {
             background-color: #e9ecef;
             min-height: 100vh;
@@ -46,6 +54,14 @@
             background-color: #d00;
             color: white;
         }
+
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background-color: #f8f9fa; /* фон Bootstrap */
+        }
+
     </style>
 </head>
 <body>
@@ -75,40 +91,40 @@
                     <div class="col-md-6">
                         <h6>Справочник погрузчиков</h6>
                         <button class="btn btn-custom-red btn-sm mb-2" onclick="newFork()">Добавить</button>
-                        <div class="table-wrapper">
-                            <table class="table table-bordered table-sm table-hover" id="forkliftTable">
-                                <thead>
-                                    <tr>
-                                     
-
-                                        <th>№</th>
-                                        <th>Марка</th>
-                                        <th>Номер</th>
-                                        <th>Грузоподъёмность (т)</th>
-                                        <th>Активен</th>
-                                        <th>Дата изменения</th>
-                                        <th>Пользователь</th>
-                                        <th>Действия</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="display:none">
-                                        <td>1</td>
-                                        <td>45-4ГПМ</td>
-                                        <td>4565 PH-1</td>
-                                        <td>2.5</td>
-                                        <td><input type="checkbox" checked></td>
-                                        <td>13.03.2024</td>
-                                        <td>Никаких</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProtocolModal">✎</button>
-                                            <button class="btn btn-sm btn-outline-danger">✖</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                      
+                            <div class="table-scroll" style="max-height: 400px; overflow-y: auto;">
+                                <table class="table table-bordered table-sm table-hover" id="forkliftTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>№</th>
+                                            <th>Марка</th>
+                                            <th>Номер</th>
+                                            <th>Грузоподъёмность (т)</th>
+                                            <th>Активен</th>
+                                            <th>Дата изменения</th>
+                                            <th>Пользователь</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>45-4ГПМ</td>
+                                            <td>4565 PH-1</td>
+                                            <td>2.5</td>
+                                            <td><input type="checkbox" checked></td>
+                                            <td>13.03.2024</td>
+                                            <td>Никаких</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProtocolModal">✎</button>
+                                                <button class="btn btn-sm btn-outline-danger">✖</button>
+                                            </td>
+                                        </tr>
+                                        <!-- другие строки -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        
                     </div>
                     <div class="col-md-6" >
                         <h6>Протокол по погрузчику <b><span id="ownerNbr"></span></b></h6>
@@ -158,16 +174,16 @@
                     <div class="modal-body">
                     <input name="id" type="hidden"/>
                         <div class="mb-3">
-                            <label class="form-label">Модель</label>
-                            <input type="text" class="form-control" name="brand" required>
+                            <label class="form-label" for="brand">Модель</label>
+                            <input type="text" class="form-control" name="brand" >
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Номер</label>
-                            <input type="text" class="form-control" name="number" required>
+                            <label class="form-label" for="number">Номер</label>
+                            <input type="text" class="form-control" name="number" >
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Грузоподъемность</label>
-                            <input type="number" class="form-control" name="capacity" min="1" required>
+                            <label class="form-label" for="capacity">Грузоподъемность</label>
+                            <input type="number" class="form-control" name="capacity" >
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Дата</label>
@@ -299,7 +315,7 @@
             }
         });
 
-        async function fetchRest(method, url, body)
+      async function fetchResponse(method, url, body)
         {
             const token = localStorage.getItem('jwt');
 
@@ -311,6 +327,14 @@
                 },
                 body: JSON.stringify(body)
             });
+
+            return response;
+
+        }
+
+        async function fetchRest(method, url, body)
+        {
+            const response = await fetchResponse(method, url, body);
 
             if (!response.ok)
             {
@@ -331,9 +355,9 @@
                 const [day, month, year] = datePart.split('.');  
                 const [hours, minutes] = timePart.split(':');    
                 const isoDate = new Date(
-                    Number(year),      // Год
-                    Number(month) - 1, // Месяц (от 0)
-                    Number(day),       // День
+                    Number(year),      
+                    Number(month) - 1, 
+                    Number(day),       
                     Number(hours),
                     Number(minutes)
                 );
@@ -448,34 +472,134 @@
             }
         }
 
+        function clearValidationErrors(form)
+        {
+            const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
+
+            for (let i = 0; i < elements.length; i++) {
+                const el = elements[i];
+                el.classList.remove('is-invalid');
+                el.classList.remove('is-valid');
+                el.is_error = undefined; 
+
+                const next = el.nextElementSibling;
+                if (next && next.classList.contains('invalid-feedback')) {
+                    next.remove();
+                }
+
+                const label = form.querySelector(`label[for="${el.id}"], label[for="${el.name}"]`);
+                if (label) {
+                    label.classList.remove('text-danger');
+                }
+            }
+        }
+
+        function applyValidationErrors(form, errors)
+        {
+            const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
+
+            for (let i = 0; i < elements.length; i++)
+            {
+                const el = elements[i];
+                const name = el.name;
+                if (!name) continue;
+
+
+
+                const label = form.querySelector(`label[for="${el.id}"], label[for="${name}"]`);
+                const error = errors[name];
+
+               
+                const next = el.nextElementSibling;
+
+                if (next && next.classList.contains('invalid-feedback')) {
+                    next.remove();
+                }
+
+                if (error)
+                {
+                    el.classList.remove('is-valid');
+                    el.classList.add('is-invalid');
+                    el.is_error = true;
+
+                    if (label)
+                    {
+                        label.classList.add('text-danger');
+                    }
+
+                    const reason = extractReason(error);
+                    if (!reason) continue;
+
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback';
+                    feedback.textContent = reason;
+                    el.insertAdjacentElement('afterend', feedback);
+                    continue;
+                }
+
+                if (label) {
+                    label.classList.remove('text-danger');
+                }
+
+                el.classList.remove('is-invalid');
+                if (el.is_error)
+                {
+                    el.is_error = false;
+                    el.classList.add('is-valid');
+
+                }
+            
+            }
+        }
+
+     
+        function extractReason(errorObj)
+        {
+            while (errorObj) {
+                if (errorObj.reason && errorObj.reason.trim()) return errorObj.reason;
+                errorObj = errorObj.inner;
+            }
+            return '';
+        }
+
+
+
+
         async function postSubmit(form)
         {
 
-            if (!form.checkValidity())
-            {
-                form.classList.add('was-validated');
-                event.preventDefault();
-                event.stopPropagation();
-                return false;
-            }
-
+     
             event.preventDefault();
 
-            try
-            {
-                const data = await fetchRestApi(form.dataset.formMethod, form.action, getFormData(form));
-                if (form.callBack)
+            try {
+                const response = await fetchResponse(form.dataset.formMethod, form.action, getFormData(form));
+
+                if (response.ok)
                 {
-                    form.callBack(data);
+
+                    const data = await response.json();
+
+                    if (form.callBack)
+                    {
+                        form.callBack(data);
+                    }
+
+                    const modal = form.closest(".modal");
+                    if (modal)
+                    {
+                        bootstrap.Modal.getInstance(modal).hide();
+                    }
+                    return;
+
+
                 }
 
-                const modal = form.closest(".modal");
-                if (modal)
+                const err = await response.json();
+                if (err)
                 {
-                    bootstrap.Modal.getInstance(modal).hide();
+                    applyValidationErrors(form, err);
                 }
 
-                
             }
             catch (error)
             {
@@ -527,7 +651,7 @@
         <td>${forklift.brand}</td>
         <td>${forklift.number}</a></td>
         <td>${forklift.capacity.toFixed(3)}</td>
-        <td>${forklift.isActive ? 'Да' : 'Нет'}</td>
+        <td align="center"><input type="checkbox" onclick="setActive(this)" value="${forklift.id}" ${forklift.isActive ? 'checked=true' : ''}></td>
         <td>${new Date(forklift.modifiedAt).toLocaleString()}</td>
         <td>${forklift.modifiedBy}</td>
         <td>
@@ -616,6 +740,7 @@ async function loadDetails(ownerId,ownerNbr) {
                         form.dataset.formUri = saveURI;
                         form.callBack = callBack;
                         setFormData(form, data);
+                        clearValidationErrors(form);
                     }
                     new bootstrap.Modal(win).show();
                 }
@@ -653,6 +778,25 @@ async function loadDetails(ownerId,ownerNbr) {
         {
             await showEdit("fork/lift/new", "addLoaderModal", "PUT", "fork/lift", x => refreshFork(x));
         }
+
+
+        async function setActive(el)
+        {
+            try
+            {
+                //event.preventDefault();
+                event.stopPropagation();
+                const data = await fetchRestApi("PATCH", "fork/lift/active/" + el.value + "/" + el.checked, {});
+                el.checked = data.isActive;
+                refreshFork(data);
+            }
+            catch (error)
+            {
+                console.error("Ошибка при удалении данных:", error);
+                alert("Ошибка при удалении данных:" + error.message);
+            }
+        }
+
 
         async function editFork(id)
         {
