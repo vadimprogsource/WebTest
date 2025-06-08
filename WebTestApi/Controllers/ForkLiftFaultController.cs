@@ -18,11 +18,11 @@ namespace TestWebApi.Controllers
 
 
         [HttpGet("new/{ownerId}")]
-        public  async Task<ActionResult> GetNewAsync([FromRoute] int ownerId)=> Ok(ToModel(await Factory.CreateInstanceAsync(ownerId)));
+        public  async Task<IActionResult> GetNewAsync([FromRoute] int ownerId)=> Ok(ToModel(await Factory.CreateInstanceAsync(ownerId)));
 
 
         [HttpPut("{ownerId}")]
-        public async Task<ActionResult> PutAsync([FromRoute]int ownerId, [FromBody] ForkFaultModel model)
+        public async Task<IActionResult> PutAsync([FromRoute]int ownerId, [FromBody] ForkFaultModel model)
         {
             if (Validator.Validate(model))
             {
@@ -30,15 +30,15 @@ namespace TestWebApi.Controllers
                 return Ok(ToModel(entity));
             }
 
-            return BadRequest("CreateInvalidateError");
+            return Error();
 
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public override Task<ActionResult> PutAsync([FromBody] ForkFaultModel model) => throw new NotSupportedException();
+        public override Task<IActionResult> PutAsync([FromBody] ForkFaultModel model) => throw new NotSupportedException();
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        public override Task<ActionResult> GetNewAsync() => throw new NotSupportedException();
+        public override Task<IActionResult> GetNewAsync() => throw new NotSupportedException();
         
 
 

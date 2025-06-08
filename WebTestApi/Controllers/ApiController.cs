@@ -24,14 +24,14 @@ namespace TestWebApi.Controllers
 
 
         [HttpGet("{id}")]
-        public virtual async  Task<ActionResult> GetAsync(int id)
+        public virtual async  Task<IActionResult> GetAsync(int id)
         {
             TEntity entity = await  Provider.GetByIdAsync(id);
             return Ok(ToModel(entity));
         }
 
         [HttpGet("new")]
-        public virtual async Task<ActionResult> GetNewAsync()
+        public virtual async Task<IActionResult> GetNewAsync()
         {
             TEntity entity = await Factory.CreateInstanceAsync();
             return Ok(ToModel(entity));
@@ -39,7 +39,7 @@ namespace TestWebApi.Controllers
 
 
         [HttpPost]
-        public virtual async Task<ActionResult> PostAsync([FromBody] FilterModel filter)
+        public virtual async Task<IActionResult> PostAsync([FromBody] FilterModel filter)
         {
             if (filter.MaxCount < 1 || filter.MaxCount > 1000)
             {
@@ -50,8 +50,11 @@ namespace TestWebApi.Controllers
             return Ok(entities.Select(x => ToModel(x)));
         }
 
+
+        protected IActionResult Error()=> BadRequest(ErrorModel.Create(Validator.Errors));
+
         [HttpPut]
-        public virtual async Task<ActionResult> PutAsync([FromBody]TModel model)
+        public virtual async Task<IActionResult> PutAsync([FromBody]TModel model)
         {
             if (Validator.Validate(model))
             {
@@ -59,12 +62,12 @@ namespace TestWebApi.Controllers
                 return Ok(ToModel(entity));
             }
 
-            return BadRequest(ErrorModel.Create(Validator.Errors));
+            return Error();
 
         }
 
         [HttpPatch]
-        public virtual  async Task<ActionResult> PatchAsync([FromBody]TModel model)
+        public virtual  async Task<IActionResult> PatchAsync([FromBody]TModel model)
         {
             if (Validator.Validate(model))
             {
@@ -72,11 +75,11 @@ namespace TestWebApi.Controllers
                 return Ok(ToModel(entity));
             }
 
-            return BadRequest(ErrorModel.Create(Validator.Errors));
+            return Error();
         }
 
         [HttpDelete("{id}")]
-        public virtual async Task<ActionResult> DeleteAsync(int id)
+        public virtual async Task<IActionResult> DeleteAsync(int id)
         {
             if (await Provider.ExecuteDeleteAsync(id))
             {
