@@ -214,27 +214,34 @@
                 <form form-method="" form-uri="" onsubmit="postSubmit(this)">
                     <input name="id" type="hidden" />
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addProtocolModalLabel">Добавить протокол погрузчика</h5>
+                        <h5 class="modal-title" id="addProtocolModalLabel">Проблемы с погрузчиком? опишите </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
 
                         <div class="mb-3">
-                            <label class="form-label">Дата</label>
-                            <input type="datetime" data-type="datetime" class="form-control" name="problemDetectedAt" >
+                            <div class="row g-2">
+                                <div class="col">
+                                    <label class="form-label" for="problemDetectedAt">Начало</label>
+                                    <input type="text" class="form-control" data-type="datetime" name="problemDetectedAt">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label" for="problemResolvedAt">Окончание</label>
+                                    <input type="text" class="form-control" data-type="datetime"  name="problemResolvedAt">
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Закрыто</label>
-                            <input type="datetime" data-type="datetime" class="form-control" name="problemResolvedAt">
-                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Время простоя</label>
                             <input type="time" class="form-control" name="downtime" readonly disabled>
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Причина</label>
-                            <input type="text" class="form-control" name="reason" >
+                            <label class="form-label" for="reason">Причина</label>
+                            <textarea class="form-control" name="reason" rows="5" placeholder="Опишите причину..."></textarea>
                         </div>
+
 
                     </div>
                     <div class="modal-footer">

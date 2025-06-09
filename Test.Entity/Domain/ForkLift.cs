@@ -8,7 +8,7 @@ namespace Test.Entity.Domain
         public string Brand { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
         public decimal Capacity { get; set; } // up to 3 digits after decimal
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = false;
         public DateTime ModifiedAt { get; set; } = DateTime.Now;
         public User ModifiedBy { get; set; } = new User();
 
