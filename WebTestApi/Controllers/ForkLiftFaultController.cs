@@ -12,13 +12,11 @@ namespace TestWebApi.Controllers
     [Authorize]
     public class ForkLiftFaultController : ApiController<IForkFault, ForkFaultModel>
     {
-        public ForkLiftFaultController(IDataProvider<IForkFault> provider, IDataService<IForkFault> service, IDataFactory<IForkFault> factory, IDataValidator<IForkFault> validator) : base(provider, service, factory, validator)
-        {
-        }
+        
 
 
         [HttpGet("new/{ownerId}")]
-        public async Task<IActionResult> GetNewAsync([FromRoute] int ownerId) => Factory is IForkFaultFactory factory ? Ok(ToModel(await factory.CreateInstanceAsync(ownerId))) : NoContent();
+        public async Task<IActionResult> GetNewAsync([FromRoute] int ownerId) => Ok(ToModel(await Resolve<IForkFaultFactory>().CreateInstanceAsync(ownerId)));
 
 
 
@@ -29,23 +27,19 @@ namespace TestWebApi.Controllers
             {
                 filter.MaxCount = 50;
             }
-
-            if (Provider is IForkFaultProvider provider)
-            {
-                IForkFault[] entities = await provider.GetFaultsAsync(ownerId , filter);
-                return Ok(entities.Select(ToModel));
-            }
-
-            return NoContent();
+           
+           IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerId , filter);
+           return Ok(entities.Select(ToModel));
+           
         }
 
 
         [HttpPut("{ownerId}")]
         public async Task<IActionResult> PutAsync([FromRoute]int ownerId, [FromBody] ForkFaultModel model)
         {
-            if (Validator.Validate(model) && Service is IForkFaultService service)
+            if (Validator.Validate(model))
             {
-                IForkFault entity = await service.AddFaultAsync(ownerId,model);
+                IForkFault entity = await Resolve<IForkFaultService>().AddFaultAsync(ownerId,model);
                 return Ok(ToModel(entity));
             }
 

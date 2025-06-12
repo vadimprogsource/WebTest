@@ -39,11 +39,15 @@ builder.Services.AddScoped<IDataRepository<ForkFault>, ForkFaultRepository>();
 builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataFactory>();
 builder.Services.AddScoped<IDataProvider<IForkLift>, ForkLiftDataProvider>();
 builder.Services.AddScoped<IDataService<IForkLift>, ForkLiftDataService>();
+builder.Services.AddScoped<IForkLiftService, ForkLiftDataService>();
 builder.Services.AddScoped<IDataValidator<IForkLift>, ForkLiftDataValidator>();
 
 builder.Services.AddScoped<IDataFactory<IForkFault>, ForkFaultDataFactory>();
+builder.Services.AddScoped<IForkFaultFactory, ForkFaultDataFactory>();
 builder.Services.AddScoped<IDataProvider<IForkFault>, ForkFaultDataProvider>();
+builder.Services.AddScoped<IForkFaultProvider, ForkFaultDataProvider>();
 builder.Services.AddScoped<IDataService<IForkFault>, ForkFaultDataService>();
+builder.Services.AddScoped<IForkFaultService, ForkFaultDataService>();
 builder.Services.AddScoped<IDataValidator<IForkFault>, ForkFaultDataValidator>();
 
 builder.Services.AddScoped<IDataRepository<ForkLift>, ForkLiftRepository>();

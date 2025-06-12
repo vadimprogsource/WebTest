@@ -1,7 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Test.Api;
 using Test.Api.Infrastructure;
+using Test.AppService.Infrastructure;
 using TestWebApi.Models;
 
 namespace TestWebApi.Controllers
@@ -9,18 +11,18 @@ namespace TestWebApi.Controllers
     [ApiController]
     public abstract class ApiController<TEntity,TModel> : ControllerBase where TEntity : IIdentity where TModel : TEntity
     {
-        protected readonly IDataProvider<TEntity> Provider;
-        protected readonly IDataService<TEntity>  Service;
-        protected readonly IDataValidator<TEntity> Validator;
-        protected readonly IDataFactory<TEntity> Factory;
 
-        public ApiController(IDataProvider<TEntity> provider ,IDataService<TEntity> service, IDataFactory<TEntity> factory, IDataValidator<TEntity> validator)
-        {
-            Provider = provider;
-            Validator = validator;
-            Factory = factory;
-            Service = service;
-        }
+
+        protected TService Resolve<TService>() => HttpContext.RequestServices.GetService(typeof(TService)) is TService service ?service : throw new NotSupportedException();
+
+
+        private  IDataValidator<TEntity>? validator = null;
+
+        protected IDataProvider<TEntity>  Provider => Resolve<IDataProvider<TEntity>>();
+        protected IDataService<TEntity>   Service => Resolve<IDataService<TEntity>>();
+        protected IDataValidator<TEntity> Validator => validator ??= Resolve<IDataValidator<TEntity>>();
+        protected IDataFactory<TEntity>   Factory=>Resolve<IDataFactory<TEntity>>();
+
 
         protected abstract TModel ToModel(TEntity entity);
 
@@ -53,7 +55,7 @@ namespace TestWebApi.Controllers
         }
 
 
-        protected IActionResult Error()=> BadRequest(ErrorModel.Create(Validator.Errors));
+        protected IActionResult Error()=> validator!=null? BadRequest(ErrorModel.Create(validator.Errors)):BadRequest();
 
         [HttpPut]
         public virtual async Task<IActionResult> PutAsync([FromBody]TModel model)
