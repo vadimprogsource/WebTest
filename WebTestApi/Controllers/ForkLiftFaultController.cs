@@ -12,21 +12,40 @@ namespace TestWebApi.Controllers
     [Authorize]
     public class ForkLiftFaultController : ApiController<IForkFault, ForkFaultModel>
     {
-        public ForkLiftFaultController(IDataAccessProvider<IForkFault> provider, IDataFactory<IForkFault> factory, IDataValidator<IForkFault> validator) : base(provider, factory, validator)
+        public ForkLiftFaultController(IDataProvider<IForkFault> provider, IDataService<IForkFault> service, IDataFactory<IForkFault> factory, IDataValidator<IForkFault> validator) : base(provider, service, factory, validator)
         {
         }
 
 
         [HttpGet("new/{ownerId}")]
-        public  async Task<IActionResult> GetNewAsync([FromRoute] int ownerId)=> Ok(ToModel(await Factory.CreateInstanceAsync(ownerId)));
+        public async Task<IActionResult> GetNewAsync([FromRoute] int ownerId) => Factory is IForkFaultFactory factory ? Ok(ToModel(await factory.CreateInstanceAsync(ownerId))) : NoContent();
+
+
+
+        [HttpPost("{ownerId}")]
+        public virtual async Task<IActionResult> PostAsync([FromRoute]int ownerId, [FromBody] FilterModel filter)
+        {
+            if (filter.MaxCount < 1 || filter.MaxCount > 1000)
+            {
+                filter.MaxCount = 50;
+            }
+
+            if (Provider is IForkFaultProvider provider)
+            {
+                IForkFault[] entities = await provider.GetFaultsAsync(ownerId , filter);
+                return Ok(entities.Select(ToModel));
+            }
+
+            return NoContent();
+        }
 
 
         [HttpPut("{ownerId}")]
         public async Task<IActionResult> PutAsync([FromRoute]int ownerId, [FromBody] ForkFaultModel model)
         {
-            if (Validator.Validate(model))
+            if (Validator.Validate(model) && Service is IForkFaultService service)
             {
-                IForkFault entity = await Provider.InserNewAsync(model, ownerId);
+                IForkFault entity = await service.AddFaultAsync(ownerId,model);
                 return Ok(ToModel(entity));
             }
 

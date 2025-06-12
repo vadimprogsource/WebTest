@@ -5,6 +5,6 @@ public interface IFilterData
 {
     int MaxCount { get; }
     string SearchPattern { get; }
-    int OwnerId { get; }
+    
 }
 

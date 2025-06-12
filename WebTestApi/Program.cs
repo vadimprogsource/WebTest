@@ -11,6 +11,9 @@ using Test.Repository.Domain;
 using Microsoft.OpenApi.Models;
 using TestWebApi.Services;
 using Microsoft.Extensions.FileProviders;
+using Test.AppService.Domain.Fork;
+using Test.AppService.Domain.Security;
+using Test.AppService.Domain.Fault;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,18 +28,29 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 builder.Services.AddScoped<IAuthProvider, AuthProvider>();
+builder.Services.AddScoped<ISessionStorage, DataSessionStorage>();
+//builder.Services.AddScoped<ISessionStorage, MemorySessionStorage>();
+
 builder.Services.AddScoped<IDataRepository<User>, UserRepository>();
 builder.Services.AddScoped<IDataRepository<UserSession>, UserSessionRepository>();
 builder.Services.AddScoped<IDataRepository<ForkLift>, ForkLiftRepository>();
 builder.Services.AddScoped<IDataRepository<ForkFault>, ForkFaultRepository>();
-builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataAccessProvider>();
-builder.Services.AddScoped<IDataAccessProvider<IForkLift>, ForkLiftDataAccessProvider>();
-builder.Services.AddScoped<IDataFactory<IForkFault>, ForkFaultDataAccessProvider>();
-builder.Services.AddScoped<IDataAccessProvider<IForkFault>, ForkFaultDataAccessProvider>();
+
+builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataFactory>();
+builder.Services.AddScoped<IDataProvider<IForkLift>, ForkLiftDataProvider>();
+builder.Services.AddScoped<IDataService<IForkLift>, ForkLiftDataService>();
 builder.Services.AddScoped<IDataValidator<IForkLift>, ForkLiftDataValidator>();
+
+builder.Services.AddScoped<IDataFactory<IForkFault>, ForkFaultDataFactory>();
+builder.Services.AddScoped<IDataProvider<IForkFault>, ForkFaultDataProvider>();
+builder.Services.AddScoped<IDataService<IForkFault>, ForkFaultDataService>();
 builder.Services.AddScoped<IDataValidator<IForkFault>, ForkFaultDataValidator>();
 
-
+builder.Services.AddScoped<IDataRepository<ForkLift>, ForkLiftRepository>();
+builder.Services.AddScoped<IDataRepository<ForkFault>, ForkFaultRepository>();
+builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataFactory>();
+builder.Services.AddScoped<IDataProvider<IForkLift>, ForkLiftDataProvider>();
+builder.Services.AddScoped<IDataService<IForkLift>, ForkLiftDataService>();
 
 switch (builder.Configuration.GetConnectionString("dbServer"))
 {
@@ -131,9 +145,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseStaticFiles();
-
-app.UseStaticFiles();
-
 app.UseCors("AllowAll");
+
+app.UseStaticFiles();
+
+
+if (app.Environment.IsDevelopment() || true)  app.Use(async (context, next) =>
+{
+    context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate";
+    context.Response.Headers["Pragma"] = "no-cache";
+    context.Response.Headers["Expires"] = "0";
+    await next();
+});
+
+
 app.Run();

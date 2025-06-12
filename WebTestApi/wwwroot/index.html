@@ -6,22 +6,37 @@
     <title>Справочник погрузчиков</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
+
+    <script src="/js/datetime.js"></script>
+    <script src="/js/errors.js"></script>
+    <script src="/js/fetch.js"></script>
+    <script src="/js/form.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="/js/auth.js"></script>
+
+    <script src="/js/htmltemplate.js?v=1"></script>
+    <script src="/js/forkview.js?v=1"></script>
+    <script src="/js/faultview.js?v=2"></script>
+
+
+
     <style>
-        body {
+        body
+        {
             background-color: #f8f9fa;
         }
 
 
 
-        #forkliftTable tbody tr.active td {
+        #forkliftTable tbody tr.active td
+        {
             background-color: #d0ebff !important;
-            font-weight:bold;
-
+            font-weight: bold;
         }
 
-      
-        
+
+
         .sidebar {
             background-color: #e9ecef;
             min-height: 100vh;
@@ -58,13 +73,12 @@
             z-index: 2;
             background-color: #f8f9fa; /* фон Bootstrap */
         }
-
     </style>
 </head>
 <body>
     <div class="header d-flex align-items-center justify-content-between">
         <span class="fs-5">Справочник погрузчиков</span>
-        <button class="btn btn-light" onclick="signOut()">Профиль</button>
+        <button class="btn btn-light" onclick="auth.signOut()">Профиль</button>
     </div>
     <div class="container-fluid">
         <div class="row">
@@ -81,49 +95,55 @@
             <div class="col-md-10 content">
                 <div class="d-flex mb-3 align-items-center">
                     <input type="text" class="form-control me-2 w-auto" placeholder="Номер погрузчика" id="searchPatter">
-                    <button class="btn btn-custom-red me-2" onclick="searchFork(document.getElementById('searchPatter').value)" >Найти</button>
-                    <a href="#" class="text-decoration-none" onclick="searchFork()">Сбросить фильтр</a>
+                    <button class="btn btn-custom-red me-2" onclick="forkView.search(document.getElementById('searchPatter').value)">Найти</button>
+                    <a href="#" class="text-decoration-none" onclick="forkView.search();document.getElementById('searchPatter').value=''">Сбросить фильтр</a>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <h6>Справочник погрузчиков</h6>
                         <button class="btn btn-custom-red btn-sm mb-2" onclick="newFork()">Добавить</button>
-                      
-                            <div class="table-scroll" style="max-height: 400px; overflow-y: auto;">
-                                <table class="table table-bordered table-sm table-hover" id="forkliftTable">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>№</th>
-                                            <th>Марка</th>
-                                            <th>Номер</th>
-                                            <th>Грузоподъёмность (т)</th>
-                                            <th>Активен</th>
-                                            <th>Дата изменения</th>
-                                            <th>Пользователь</th>
-                                            <th>Действия</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>45-4ГПМ</td>
-                                            <td>4565 PH-1</td>
-                                            <td>2.5</td>
-                                            <td><input type="checkbox" checked></td>
-                                            <td>13.03.2024</td>
-                                            <td>Никаких</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProtocolModal">✎</button>
-                                                <button class="btn btn-sm btn-outline-danger">✖</button>
-                                            </td>
-                                        </tr>
-                                        <!-- другие строки -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        
+
+                        <div class="table-scroll" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-bordered table-sm table-hover" id="forkliftTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>№</th>
+                                        <th>Марка</th>
+                                        <th>Номер</th>
+                                        <th>Грузоподъёмность (т)</th>
+                                        <th>Активен</th>
+                                        <th>Дата изменения</th>
+                                        <th>Пользователь</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  <script type="text/x-handlebars-template">
+
+                                    <tr data-id="{{id}}" data-number="{{number}}" onclick="forkView.select(this)" {{#if selected}}class="active"{{/if}}>
+                                        <td>{{index}}</td>
+                                        <td>{{brand}}</td>
+                                        <td>{{number}}</td>
+                                        <td>{{capacity}}</td>
+                                        <td>
+                                            <input type="checkbox" value="{{id}}"{{#if isActive}}checked="checked"{{/if}} onclick="forkView.setActive(this)" />
+                                        </td>
+                                        <td>{{dateTime modifiedAt}}</td>
+                                        <td>{{modifiedBy}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editFork({{id}})">✎</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFork({{id}})">✖</button>
+                                        </td>
+                                    </tr>
+
+                                   </script>
+                                </tbody>
+                            </table>
+
+                        </div>
+
                     </div>
-                    <div class="col-md-6" >
+                    <div class="col-md-6">
                         <h6>Протокол по погрузчику <b><span id="ownerNbr"></span></b></h6>
                         <button class="btn btn-custom-red btn-sm mb-2" onclick="newFailure()">Добавить</button>
                         <div class="table-wrapper">
@@ -131,25 +151,28 @@
                                 <thead>
                                     <tr>
                                         <th>№</th>
-                                        <th>Дата</th>
-                                        <th>Ожидание</th>
+                                        <th>Начало</th>
+                                        <th>Окончание</th>
                                         <th>Время простоя</th>
                                         <th>Причина</th>
                                         <th>Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr style="display:none">
-                                        <td>1</td>
-                                        <td>14.03.2024</td>
-                                        <td>16:20</td>
-                                        <td>45 мин</td>
-                                        <td>смывка</td>
+                                    <script type="text/x-handlebars-template">
+                                    <tr>
+                                        <td>{{index}}</td>
+                                        <td>{{dateTime problemDetectedAt}}</td>
+                                        <td>{{dateTime problemResolvedAt}}</td>
+                                        <td>{{downtime}}</td>
+                                        <td>{{reason}}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addProtocolModal">✎</button>
-                                            <button class="btn btn-sm btn-outline-danger">✖</button>
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="editFailure({{id}})" >✎</button>
+                                            <button class="btn btn-sm btn-outline-danger"   onclick="deleteFailure({{id}})">✖</button>
                                         </td>
                                     </tr>
+                                    </script>
+
                                 </tbody>
                             </table>
                         </div>
@@ -163,24 +186,24 @@
     <div class="modal fade" id="addLoaderModal" tabindex="-1" aria-labelledby="addLoaderModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form form-method="" form-uri="" onsubmit="postSubmit(this)" >
+                <form form-method="" form-uri="" onsubmit="postSubmit(this)">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addLoaderModalLabel">Погрузчик</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
-                    <input name="id" type="hidden"/>
+                        <input name="id" type="hidden" />
                         <div class="mb-3">
                             <label class="form-label" for="brand">Модель</label>
-                            <input type="text" class="form-control" name="brand" >
+                            <input type="text" class="form-control" name="brand">
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="number">Номер</label>
-                            <input type="text" class="form-control" name="number" >
+                            <input type="text" class="form-control" name="number">
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="capacity">Грузоподъемность</label>
-                            <input type="number" class="form-control" name="capacity" >
+                            <input type="number" class="form-control" name="capacity">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Дата</label>
@@ -227,7 +250,7 @@
                                 </div>
                                 <div class="col">
                                     <label class="form-label" for="problemResolvedAt">Окончание</label>
-                                    <input type="text" class="form-control" data-type="datetime"  name="problemResolvedAt">
+                                    <input type="text" class="form-control" data-type="datetime" name="problemResolvedAt">
                                 </div>
                             </div>
                         </div>
@@ -281,542 +304,63 @@
         </div>
     </div>
 
-    <script>document.addEventListener('DOMContentLoaded', function () {
+    <script>
+
+        const forkView = new ForkView("forkliftTable");
+        const faultView = new FaultView("faultTable", "ownerNbr");
+        forkView.detailView = faultView;
 
 
-
-                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                loginModal.show();
-           
+        document.addEventListener('DOMContentLoaded', function ()
+        {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
         });
 
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            try {
-                const response = await fetch('/auth/signin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ login: document.getElementById('username').value.trim(), password: document.getElementById('password').value.trim() })
-                });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    const token = data.token;
-                    localStorage.setItem('jwt', token);
-                    await searchFork();
-
-                    bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
-             
-                } else {
-                    document.getElementById('loginError').classList.remove('d-none');
-                }
-
-            } catch (err) {
-                console.error('Ошибка при авторизации:', err);
+            if (await auth.signIn(document.getElementById('username').value.trim(), document.getElementById('password').value.trim()))
+            {
+                await forkView.search();
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
             }
+            else
+            {
+                document.getElementById('loginError').classList.remove('d-none');
+            }
+
+
         });
 
-      async function fetchResponse(method, url, body)
-        {
-            const token = localStorage.getItem('jwt');
 
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(body)
-            });
 
-            return response;
-
-        }
-
-        async function fetchRest(method, url, body)
-        {
-            const response = await fetchResponse(method, url, body);
-
-            if (!response.ok)
-            {
-                throw new Error(`HTTP error ${response.status}`);
-            }
-
-            return response;
-
-        }
-
-        function parseToISO(dateStr)
-
-        {
-            try
-            {
-                
-                const [datePart, timePart] = dateStr.split(' '); 
-                const [day, month, year] = datePart.split('.');  
-                const [hours, minutes] = timePart.split(':');    
-                const isoDate = new Date(
-                    Number(year),      
-                    Number(month) - 1, 
-                    Number(day),       
-                    Number(hours),
-                    Number(minutes)
-                );
-                return isoDate.toISOString(); 
-
-            }
-            catch
-            {
-                return null; 
-            }
-
-            
-        }
-
-        async function fetchRestApi(method, url, body)
-        {
-            const response = await fetchRest(method, url, body);  
-            const data = await response.json(); 
-            return data;           
-
-        }
-
-        async function signOut()
-        {
-            try
-            {
-                fetchRest("POST", "auth/signout");
-                localStorage.removeItem('jwt');
-                 
-            }
-            catch { }
-            window.location.reload();
-        }
-
-        function getFormData(form) {
-            const data = {};
-            const elements = form.elements;
-
-            for (let i = 0; i < elements.length; i++) {
-                const el = elements[i];
-                if (!el.name || el.disabled) continue;
-
-                if (el.dataset.type === "datetime")
-                {
-                    data[el.name] = parseToISO(el.value);
-                    continue;
-                }
-
-
-
-                switch (el.type) {
-                    case 'checkbox':
-                        data[el.name] = el.checked;
-                        break;
-                    case 'radio':
-                        if (el.checked) data[el.name] = el.value;
-                        break;
-                    case 'number':
-                        data[el.name] = el.value ? parseFloat(el.value) : null;
-                        break;
-                    case 'datetime':
-                        data[el.name] = el.value || null;
-                        break;
-                    default:
-                        data[el.name] = el.value;
-
-                }
-            }
-
-            return data;
-        }
-
-
-
-        function formatDateTime(dateString) {
-            const date = new Date(dateString);
-
-            const pad = n => n.toString().padStart(2, '0');
-
-            const formatted =
-                pad(date.getDate()) + '.' +
-                pad(date.getMonth() + 1) + '.' +
-                date.getFullYear() + ' ' +
-                pad(date.getHours()) + ':' +
-                pad(date.getMinutes());
-
-            return formatted;
-        }
-
-        function setFormData(form, data) {
-            for (const [key, value] of Object.entries(data)) {
-                const input = form.querySelector(`[name="${key}"]`);
-
-                if (!input) continue;
-
-                const type = input.type;
-
-                if (type === 'datetime' || input.dataset.type==='datetime')
-                {
-                    if (value && value !== 'null') input.value = formatDateTime(value); else input.value = '';
-                    continue;
-                }
-
-                if (type === 'checkbox') {
-                    input.checked = Boolean(value);
-                } else if (type === 'radio') {
-                    const radioToCheck = form.querySelector(`[name="${key}"][value="${value}"]`);
-                    if (radioToCheck) radioToCheck.checked = true;
-                } else {
-                    input.value = value ?? '';
-                }
-            }
-        }
-
-        function clearValidationErrors(form)
-        {
-            const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
-
-            for (let i = 0; i < elements.length; i++) {
-                const el = elements[i];
-                el.classList.remove('is-invalid');
-                el.classList.remove('is-valid');
-                el.is_error = undefined; 
-
-                const next = el.nextElementSibling;
-                if (next && next.classList.contains('invalid-feedback')) {
-                    next.remove();
-                }
-
-                const label = form.querySelector(`label[for="${el.id}"], label[for="${el.name}"]`);
-                if (label) {
-                    label.classList.remove('text-danger');
-                }
-            }
-        }
-
-        function applyValidationErrors(form, errors)
-        {
-            const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
-
-            for (let i = 0; i < elements.length; i++)
-            {
-                const el = elements[i];
-                const name = el.name;
-                if (!name) continue;
-
-
-
-                const label = form.querySelector(`label[for="${el.id}"], label[for="${name}"]`);
-                const error = errors[name];
-
-               
-                const next = el.nextElementSibling;
-
-                if (next && next.classList.contains('invalid-feedback')) {
-                    next.remove();
-                }
-
-                if (error)
-                {
-                    el.classList.remove('is-valid');
-                    el.classList.add('is-invalid');
-                    el.is_error = true;
-
-                    if (label)
-                    {
-                        label.classList.add('text-danger');
-                    }
-
-                    const reason = extractReason(error);
-                    if (!reason) continue;
-
-                    const feedback = document.createElement('div');
-                    feedback.className = 'invalid-feedback';
-                    feedback.textContent = reason;
-                    el.insertAdjacentElement('afterend', feedback);
-                    continue;
-                }
-
-                if (label) {
-                    label.classList.remove('text-danger');
-                }
-
-                el.classList.remove('is-invalid');
-                if (el.is_error)
-                {
-                    el.is_error = false;
-                    el.classList.add('is-valid');
-
-                }
-            
-            }
-        }
-
-     
-        function extractReason(errorObj)
-        {
-            while (errorObj) {
-                if (errorObj.reason && errorObj.reason.trim()) return errorObj.reason;
-                errorObj = errorObj.inner;
-            }
-            return '';
-        }
-
-
-
-
-        async function postSubmit(form)
-        {
-
-     
-            event.preventDefault();
-
-            try {
-                const response = await fetchResponse(form.dataset.formMethod, form.action, getFormData(form));
-
-                if (response.ok)
-                {
-
-                    const data = await response.json();
-
-                    if (form.callBack)
-                    {
-                        form.callBack(data);
-                    }
-
-                    const modal = form.closest(".modal");
-                    if (modal)
-                    {
-                        bootstrap.Modal.getInstance(modal).hide();
-                    }
-                    return;
-
-
-                }
-
-                const err = await response.json();
-                if (err)
-                {
-                    applyValidationErrors(form, err);
-                }
-
-            }
-            catch (error)
-            {
-                console.error("Ошибка при загрузке неисправностей:", error);
-                alert("Ошибка при получении данных: " + error.message);
-            }
-        }
-
-
-        async function searchFork(text,x) {
-          
-
-            try {
-             
-                const data = await fetchRestApi('POST', '/fork/lift',{ searchPattern: text, maxCount: 100 });
-
-                if (!x && data && data.length)
-                {
-                    x = data[0];
-                }
-
-                clearDetails();
-                const tbody = document.querySelector("#forkliftTable tbody");
-                tbody.innerHTML = ""; 
-
-                for (let i = 0; i < data.length; i++) {
-                    const forklift = data[i];
-                    const row = document.createElement("tr");
-                    row.ctx = { id: forklift.id, number: forklift.number };
-
-                    if (forklift.id == x.id) row.classList.add("active"); 
-
-                    row.onclick = function ()
-                    {
-                        loadDetails(this.ctx.id, this.ctx.number);
-
-                        const body = this.parentNode.children;
-                        for (let i = 0; body && body.length && i < body.length; i++)
-                        {
-                            body[i].classList.remove("active");
-                        } 
-
-                        this.classList.add("active"); 
-                          
-                    }
-         
-                    row.innerHTML = `
-        <td>${forklift.id}</td>
-        <td>${forklift.brand}</td>
-        <td>${forklift.number}</a></td>
-        <td>${forklift.capacity.toFixed(3)}</td>
-        <td align="center"><input type="checkbox" onclick="setActive(this)" value="${forklift.id}" ${forklift.isActive ? 'checked=true' : ''}></td>
-        <td>${new Date(forklift.modifiedAt).toLocaleString()}</td>
-        <td>${forklift.modifiedBy}</td>
-        <td>
-           <button class="btn btn-sm btn-outline-secondary" onclick="editFork(${forklift.id})">✎</button>
-           <button class="btn btn-sm btn-outline-danger" onclick="deleteFork(${forklift.id})">✖</button>
-        </td>
-      `;
-                    tbody.appendChild(row);
-                }
-
-            } catch (error)
-            {
-                console.error("Search failed:", error);
-                alert("Ошибка при выполнении запроса: " + error.message);
-            }
-
-            if (x)
-            {
-                await loadDetails(x.id, x.number);
-            }
-          
-        }
-
-
-        function clearDetails()
-        {
-            const tbody = document.querySelector("#faultTable tbody");
-            tbody.innerHTML = "";
-            const num = document.getElementById("ownerNbr");
-            num.innerHTML = "";
-            num.ownerId = undefined;
-        }
-
-async function loadDetails(ownerId,ownerNbr) {
-           
-            try {
-
-                const data = await fetchRestApi('POST', `fork/lift/fault`, { ownerId, maxCount : 100 });
-                const tbody = document.querySelector("#faultTable tbody");
-                tbody.innerHTML = "";
-                const num = document.getElementById("ownerNbr");
-                num.innerHTML = ownerNbr;
-                num.ownerId = ownerId;
-
-                for (let i = 0; i < data.length; i++) {
-                    const fault = data[i];
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-        <td>${fault.id}</td>
-        <td>${new Date(fault.problemDetectedAt).toLocaleString()}</td>
-        <td>${fault.problemResolvedAt ? new Date(fault.problemResolvedAt).toLocaleString() : "-"}</td>
-        <td>${fault.downtime}</td>
-        <td>${fault.reason}</td>
- <td>
-           <button class="btn btn-sm btn-outline-secondary" onclick="editFailure(${fault.id})">✎</button>
-           <button class="btn btn-sm btn-outline-danger" onclick="deleteFailure(${fault.id})">✖</button>
-        </td>
     
-  `;
-                    tbody.appendChild(row);
-                }
 
-            } catch (error) {
-                console.error("Ошибка при загрузке неисправностей:", error);
-                alert("Ошибка при получении данных: " + error.message);
-            }
-        }
-
-
-        async function showEdit(getURI,windowID,saveMETHOD,saveURI,callBack)
+        async function refreshFork(x)
         {
-            try
-            {
-                const data = await fetchRestApi('GET', getURI);
-                const win = document.getElementById(windowID);
-
-               
-                if (win)
-                {
-                    var form = win.getElementsByTagName("FORM");
-                    if (form && form.length && (form=form[0]))
-                    {
-                        form.method = saveMETHOD;
-                        form.dataset.formMethod = saveMETHOD;
-                        form.action = saveURI;
-                        form.dataset.formUri = saveURI;
-                        form.callBack = callBack;
-                        setFormData(form, data);
-                        clearValidationErrors(form);
-                    }
-                    new bootstrap.Modal(win).show();
-                }
-
-                 
-            } catch (error) {
-                console.error("Ошибка при загрузке неисправностей:", error);
-                alert("Ошибка при получении данных: " + error.message);
-            }
-
-        }
-
-        async function del(commandURI,callBack)
-        {
-            try
-            {
-                if (!confirm("Удалить ?")) return; 
-
-                await fetchRest('DELETE', commandURI);
-                if (callBack) callBack();
-            }
-            catch (error)
-            {
-               console.error("Ошибка при удалении данных:", error);
-               alert("Ошибка при удалении данных:" + error.message);
-           }
-        }  
-
-        function refreshFork(x)
-        {
-            searchFork(document.getElementById('searchPatter').value,x);
+            await forkView.refresh(x);
         }
 
         async function newFork()
         {
-            await showEdit("fork/lift/new", "addLoaderModal", "PUT", "fork/lift", x => refreshFork(x));
+            await modal.show("fork/lift/new", "addLoaderModal", "PUT", "fork/lift", x => refreshFork(x));
         }
-
-
-        async function setActive(el)
-        {
-            try
-            {
-                //event.preventDefault();
-                event.stopPropagation();
-                const data = await fetchRestApi("PATCH", "fork/lift/active/" + el.value + "/" + el.checked, {});
-                el.checked = data.isActive;
-                refreshFork(data);
-            }
-            catch (error)
-            {
-                console.error("Ошибка при удалении данных:", error);
-                alert("Ошибка при удалении данных:" + error.message);
-            }
-        }
-
 
         async function editFork(id)
         {
-            await showEdit("fork/lift/" + id, "addLoaderModal", "PATCH", "fork/lift", x => refreshFork(x));
+            await modal.show("fork/lift/" + id, "addLoaderModal", "PATCH", "fork/lift", x => refreshFork(x));
         }
 
         async function deleteFork(id)
         {
-            await del ("fork/lift/" + id, x => refreshFork(x));
+            await del("fork/lift/" + id, x => refreshFork(x));
         }
 
-        function refreshForkFailure(x)
+        async function refreshForkFailure(x)
         {
-            const numb = document.getElementById("ownerNbr");
-            loadDetails(numb.ownerId, numb.innerHTML);
-            
+            await faultView.refresh(x);
         }
 
         async function newFailure()
@@ -824,18 +368,18 @@ async function loadDetails(ownerId,ownerNbr) {
             const numb = document.getElementById("ownerNbr");
             if (numb)
             {
-                const ownerId = numb.ownerId;
+                const ownerId = forkView.selected.id;
                 if (ownerId)
                 {
-                    await showEdit("fork/lift/fault/new/" + ownerId, "addProtocolModal", "PUT", "fork/lift/fault/" + ownerId, x => refreshForkFailure(x));
+                    await modal.show("fork/lift/fault/new/" + ownerId, "addProtocolModal", "PUT", "fork/lift/fault/" + ownerId, x => refreshForkFailure(x));
                 }
             }
-          
+
         }
 
         async function editFailure(id)
         {
-            await showEdit("fork/lift/fault/" + id, "addProtocolModal", "PATCH", "fork/lift/fault/", x => refreshForkFailure(x));
+            await modal.show("fork/lift/fault/" + id, "addProtocolModal", "PATCH", "fork/lift/fault/", x => refreshForkFailure(x));
         }
 
         async function deleteFailure(id)
@@ -844,9 +388,15 @@ async function loadDetails(ownerId,ownerNbr) {
         }
 
 
+
+
+
+
 </script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
 </body>
+
 </html>

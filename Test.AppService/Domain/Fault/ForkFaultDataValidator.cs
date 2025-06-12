@@ -4,7 +4,7 @@ using Test.Api.Infrastructure;
 using Test.AppService.Infrastructure;
 using Test.Entity.Domain;
 
-namespace Test.AppService.Domain;
+namespace Test.AppService.Domain.Fault;
 
 public class ForkFaultDataValidator : DataValidator<IForkFault>
 {

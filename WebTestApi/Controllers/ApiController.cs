@@ -9,15 +9,17 @@ namespace TestWebApi.Controllers
     [ApiController]
     public abstract class ApiController<TEntity,TModel> : ControllerBase where TEntity : IIdentity where TModel : TEntity
     {
-        protected readonly IDataAccessProvider<TEntity> Provider;
+        protected readonly IDataProvider<TEntity> Provider;
+        protected readonly IDataService<TEntity>  Service;
         protected readonly IDataValidator<TEntity> Validator;
         protected readonly IDataFactory<TEntity> Factory;
 
-        public ApiController(IDataAccessProvider<TEntity> provider , IDataFactory<TEntity> factory, IDataValidator<TEntity> validator)
+        public ApiController(IDataProvider<TEntity> provider ,IDataService<TEntity> service, IDataFactory<TEntity> factory, IDataValidator<TEntity> validator)
         {
             Provider = provider;
             Validator = validator;
             Factory = factory;
+            Service = service;
         }
 
         protected abstract TModel ToModel(TEntity entity);
@@ -46,7 +48,7 @@ namespace TestWebApi.Controllers
                 filter.MaxCount = 50;
             }
 
-            TEntity[] entities = await Provider.ApplyFilterAsync(filter);
+            TEntity[] entities = await Provider.GetByFilterAsync(filter);
             return Ok(entities.Select(x => ToModel(x)));
         }
 
@@ -58,7 +60,7 @@ namespace TestWebApi.Controllers
         {
             if (Validator.Validate(model))
             {
-                TEntity entity = await Provider.InserNewAsync(model);
+                TEntity entity = await Service.InserNewAsync(model);
                 return Ok(ToModel(entity));
             }
 
@@ -71,7 +73,7 @@ namespace TestWebApi.Controllers
         {
             if (Validator.Validate(model))
             {
-                TEntity entity = await Provider.ApplyUpdateAsync(model);
+                TEntity entity = await Service.ApplyUpdateAsync(model);
                 return Ok(ToModel(entity));
             }
 
@@ -81,7 +83,7 @@ namespace TestWebApi.Controllers
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> DeleteAsync(int id)
         {
-            if (await Provider.ExecuteDeleteAsync(id))
+            if (await Service.ExecuteDeleteAsync(id))
             {
                 return Ok();
             }

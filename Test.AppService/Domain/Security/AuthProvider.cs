@@ -9,13 +9,13 @@ namespace Test.AppService.Domain
     public class AuthProvider : IAuthProvider
     {
         private readonly IDataRepository<User>        user_repository;
-        private readonly IDataRepository<UserSession> session_repository;
+        private readonly ISessionStorage              session_storage;
 
 
-        public AuthProvider(IDataRepository<User>  user , IDataRepository<UserSession> session)
+        public AuthProvider(IDataRepository<User>  user , ISessionStorage storage)
         {
             user_repository = user;
-            session_repository = session;
+            session_storage = storage;
         }
 
         private static DateTime next_call_time; 
@@ -24,7 +24,7 @@ namespace Test.AppService.Domain
         {
             if (DateTime.UtcNow>=next_call_time)
             {
-               await session_repository.DeleteAsync(x => x.ExpiredAt <= DateTime.UtcNow);
+               await session_storage.DeleteExpiredSessions(DateTime.UtcNow);
                 next_call_time = DateTime.UtcNow.Add(UserSession.DefaultExpiredTimeOut);
             }
         }
@@ -42,9 +42,7 @@ namespace Test.AppService.Domain
                 return UserSession.Empty;
             }
 
-            UserSession session = new (user);
-            await session_repository.InsertAsync(session);
-            return session;
+            return await session_storage.CreateSessionAsync(user , DateTime.UtcNow , UserSession.DefaultExpiredTimeOut);
         }
 
         public async Task<IUserSession> GetSessionAsync(Guid sid)
@@ -56,10 +54,9 @@ namespace Test.AppService.Domain
                 return UserSession.Empty;
             }
 
+            IUserSession session =  await session_storage.GetSessionAsync(sid);
 
-            UserSession? session = await session_repository.SelectAsync(x => x.Guid == sid);
-
-            if (session == null || session.HasExpired)
+            if (session.HasExpired)
             {
                 return UserSession.Empty;
             }
@@ -71,13 +68,13 @@ namespace Test.AppService.Domain
         public async Task SignOutAsync(IUserSession session)
         {
             await TryTerminateExpired();
-            await session_repository.DeleteAsync(x => x.Guid == session.Guid);
+            await session_storage.DeleteSession(session.Guid);
         }
 
         public async Task SignOutAsync(IUser user)
         {
             await TryTerminateExpired();
-            await session_repository.DeleteAsync(x => x.UserId == user.Id);
+            await session_storage.DeleteUserSessions(user);
         }
     }
 }

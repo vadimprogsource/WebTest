@@ -8,6 +8,7 @@ namespace TestWebApi.Controllers;
 public class IndexController : ControllerBase
 {
     [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult Index()
     {
         return  File("/index.html","text/html");
