@@ -97,11 +97,15 @@
                 }
                 catch (err)
                 {
+                    alert('Ошибка при поиске:', err);
                     console.error('Ошибка при поиске:', err); // ← логируем ошибку для отладки
 
                 }
                    
             }
+
+
+
 
 
   async setActive(el)

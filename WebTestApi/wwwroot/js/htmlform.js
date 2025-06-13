@@ -120,7 +120,7 @@
 
     }
 
-    async edit(saveMETHOD, saveURI)
+    async show(saveMETHOD, saveURI)
     {
         const form = HtmlTemplate.def_form(this.rootElement);
 

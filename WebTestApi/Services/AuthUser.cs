@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
+using Microsoft.AspNetCore.Authorization;
 using Test.Api.Domain;
 using Test.Api.Infrastructure;
 
@@ -44,38 +45,46 @@ public class AuthUser: ClaimsPrincipal
             expires: session.Expired
          );
 
-
-
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+
+    public static bool HasAuthorize(HttpContext context)
+    {
+        Endpoint? endpoint = context.GetEndpoint();
+        return endpoint != null && endpoint.Metadata.GetMetadata<AuthorizeAttribute>()!=null;
+    }
+
 
     public static async Task<IUserSession> GetSessionAsync(HttpContext context)
     {
 
         ClaimsPrincipal user = context.User;
 
-        if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
+        if (user == null || user.Identity == null)
         {
             return Empty;
         }
 
-        if (context.User is AuthUser auth)
+
+        if (user.Identity.IsAuthenticated)
         {
-            return auth.session;
-        }
+            if (context.User is AuthUser auth)
+            {
+                return auth.session;
+            }
 
-        
+            Claim? jti = user.FindFirst(JwtRegisteredClaimNames.Jti);
 
-        Claim? jti = user.FindFirst(JwtRegisteredClaimNames.Jti);
+            if (jti != null && jti.Value != null && Guid.TryParse(jti.Value, out Guid guid))
+            {
+                IAuthProvider provider = context.RequestServices.GetRequiredService<IAuthProvider>();
+                IUserSession session = await provider.GetSessionAsync(guid);
 
-        if (jti != null && jti.Value != null && Guid.TryParse(jti.Value, out Guid guid))
-        {
-            IAuthProvider provider = context.RequestServices.GetRequiredService<IAuthProvider>();
-            IUserSession session = await provider.GetSessionAsync(guid);
+                context.User = new AuthUser(user, session);
+                return session;
+            }
 
-            context.User = new AuthUser(user, session);
-
-            return session;
         }
 
         return Empty;
