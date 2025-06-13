@@ -6,7 +6,7 @@ namespace Test.Api.Domain
         Guid Guid { get; }
         bool HasExpired { get; }
         DateTime Expired { get; }
-        IUser User { get; }
+        int  UserId { get; }
     }
 }
 

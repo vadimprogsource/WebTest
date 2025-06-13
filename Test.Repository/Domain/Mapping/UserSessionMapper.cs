@@ -15,7 +15,6 @@ namespace Test.Repository.Domain.Mapping
         protected override void Map(EntityTypeBuilder<UserSession> entity)
         {
             entity.HasKey(x => x.Guid);
-            entity.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId);
             entity.Ignore(x => x.Id);
         }
     }

@@ -19,6 +19,8 @@ namespace TestWebApi.Models
 
         DateTime IForkFault.ProblemDetectedAt => ProblemDetectedAt.HasValue ? ProblemDetectedAt.Value.ToUniversalTime() : DateTime.UtcNow;
 
+        bool IIdentity.IsValid => throw new NotImplementedException();
+
         public ForkFaultModel() { }
 
         public ForkFaultModel(IForkFault source)

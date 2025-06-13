@@ -24,4 +24,7 @@
     <ProjectReference Include="..\Test.Api\Test.Api.csproj" />
     <ProjectReference Include="..\Test.Entity\Test.Entity.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
+  </ItemGroup>
 </Project>

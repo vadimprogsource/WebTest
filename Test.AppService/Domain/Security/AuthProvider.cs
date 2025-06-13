@@ -64,7 +64,24 @@ namespace Test.AppService.Domain
             return session;
         }
 
-     
+        public async Task<IUser> GetSessionUserAsync(Guid sid)
+        {
+            IUserSession session = await session_storage.GetSessionAsync(sid);
+            return await GetSessionUserAsync(session);
+        }
+
+        public async Task<IUser> GetSessionUserAsync(IUserSession session)
+        {
+            if(session.HasExpired)
+            {
+                throw new AccessViolationException();
+            }
+
+            IUser user = await user_repository.SelectAsync(session.UserId);
+            return user;
+        }
+
+
         public async Task SignOutAsync(IUserSession session)
         {
             await TryTerminateExpired();
@@ -76,6 +93,8 @@ namespace Test.AppService.Domain
             await TryTerminateExpired();
             await session_storage.DeleteUserSessions(user);
         }
+
+     
     }
 }
 

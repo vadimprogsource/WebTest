@@ -6,8 +6,29 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Security;
 
-public class MemorySessionStorage : Dictionary<Guid,UserSession> , ISessionStorage
+public class MemorySessionStorage : ISessionStorage
 {
+
+    private readonly struct SessionData
+    {
+    
+        public readonly DateTime CreatedAt;
+        public readonly DateTime ExpiredAt;
+        public readonly int      UserId;
+
+        public SessionData(UserSession session)
+        {
+            CreatedAt = session.CreatedAt;
+            ExpiredAt = session.ExpiredAt;
+            UserId = session.UserId;
+        }
+    }
+
+
+    private readonly Dictionary<Guid, SessionData> sts = new();
+
+
+
     public MemorySessionStorage()
     {
     }
@@ -17,23 +38,22 @@ public class MemorySessionStorage : Dictionary<Guid,UserSession> , ISessionStora
         UserSession session = new()
         {
             Guid = Guid.NewGuid(),
-            User = (User)user,
             UserId = user.Id,
             CreatedAt = createdAt,
             ExpiredAt = createdAt.Add(expired)
 
         };
 
-        Add(session.Guid, session);
+        sts.Add(session.Guid, new SessionData(session));
         return Task.FromResult((IUserSession) session);
     }
 
-    protected async Task DeleteSessions(Func<UserSession, bool> contition)
+    private async Task DeleteSessions(Func<SessionData, bool> contition)
     {
-        foreach (Guid guid in this.Where(x => contition(x.Value)).Select(x => x.Key).ToArray())
+        foreach (Guid guid in sts.Where(x => contition(x.Value)).Select(x => x.Key).ToArray())
         {
             await Task.Delay(1);
-            Remove(guid);
+            sts.Remove(guid);
         }
     }
 
@@ -41,7 +61,7 @@ public class MemorySessionStorage : Dictionary<Guid,UserSession> , ISessionStora
 
     public Task DeleteSession(Guid guid)
     {
-        Remove(guid);
+        sts.Remove(guid);
         return Task.CompletedTask;
 
     }
@@ -51,9 +71,15 @@ public class MemorySessionStorage : Dictionary<Guid,UserSession> , ISessionStora
 
     public async Task<IUserSession> GetSessionAsync(Guid guid)
     {
-        if (TryGetValue(guid, out UserSession? session) && session !=null)
+        if (sts.TryGetValue(guid, out SessionData session))
         {
-            return session;
+            return new UserSession
+            {
+                Guid = guid,
+                CreatedAt = session.CreatedAt,
+                ExpiredAt = session.ExpiredAt,
+                UserId = session.UserId,
+            };
         }
 
         await Task.Delay(1);

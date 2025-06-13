@@ -7,15 +7,7 @@
                 this.selected = null; // ← добавил, чтобы явно инициализировать
                 this.detailView = null;
 
-                Handlebars.registerHelper("dateTime", function (value)
-                {
-                    if (value)
-                    {
-                        return formatDateTime(value);
-                    }
-
-                    return "-";
-                });
+        
             }
 
             elementAt(model, i)

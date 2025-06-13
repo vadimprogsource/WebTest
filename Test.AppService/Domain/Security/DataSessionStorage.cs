@@ -19,7 +19,6 @@ namespace Test.AppService.Domain.Security
             UserSession session = new ()
             {
                 Guid = Guid.NewGuid(),
-                User = (User)user,
                 UserId = user.Id,
                 CreatedAt = createdAt,
                 ExpiredAt = createdAt.Add(expired)

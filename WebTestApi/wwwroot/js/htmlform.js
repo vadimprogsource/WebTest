@@ -7,51 +7,61 @@
     }
 
 
-    static getFormData(form)
+    static get_data(form)
     {
+        const data = {};
+        const elements = form.elements;
 
-    }
-
-
-    async get(getURI)
-    {
-       
-        try
+        for (let i = 0; i < elements.length; i++)
         {
-            const data = await fetchRestApi('GET', getURI);
-            this.renderBody(data);
-        }
-        catch (err)
-        {
+            const el = elements[i];
+            if (!el.name || el.disabled) continue;
 
-        }
-
-    }
-
-    async edit(saveMETHOD, saveURI)
-    {
-        const form = this.rootElement.querySelector("form");
-        const caller = this.rootView;
-
-        if (form)
-        {
-
-            if (!form.context)
+            if (el.dataset.type === "datetime")
             {
-                form.context = { action: saveURI, method: saveMETHOD, view: this.rootView };
+                data[el.name] = parseToISO(el.value);
+                continue;
             }
 
 
-            form.action = saveURI;
-            form.dataset.method = saveMETHOD;
+            switch (el.type)
+            {
+                case 'checkbox':
+                    data[el.name] = el.checked;
+                    break;
+                case 'radio':
+                    if (el.checked) data[el.name] = el.value;
+                    break;
+                case 'number':
+                    data[el.name] = el.value ? parseFloat(el.value) : null;
+                    break;
+                case 'datetime':
+                    data[el.name] = el.value || null;
+                    break;
+                default:
+                    data[el.name] = el.value;
 
+            }
+        }
+
+        return data;
+    }
+
+    static def_form(rootElement)
+    {
+        const form = rootElement.querySelector("form");
+
+
+        if (form && !form.context)
+        {
+            form.context = { view: this.rootView, modal: new bootstrap.Modal(rootElement) };
             form.addEventListener("submit", async function ()
             {
                 event.preventDefault();
 
                 try
                 {
-                    const response = await fetchResponse(this.dataset.formMethod, this.action, getFormData(form));
+                    const response = await fetchResponse(this.dataset.method || this.method, this.action, HtmlTemplate.get_data(form));
 
                     if (response.ok)
                     {
@@ -64,11 +74,11 @@
                             view.refresh(data);
                         }
 
-                        const modal = this.closest(".modal");
+                        const modal = this.context.modal;
 
                         if (modal)
                         {
-                            bootstrap.Modal.getInstance(modal).hide();
+                            modal.hide();
                             return;
                         }
                     }
@@ -90,8 +100,38 @@
 
         }
 
+        return form;
 
-        new bootstrap.Modal(this.rootElement).show();
+    }
+
+
+    async get(getURI)
+    {
+       
+        try
+        {
+            const data = await fetchRestApi('GET', getURI);
+            this.renderBody(data);
+        }
+        catch (err)
+        {
+
+        }
+
+    }
+
+    async edit(saveMETHOD, saveURI)
+    {
+        const form = HtmlTemplate.def_form(this.rootElement);
+
+        if (form)
+        {
+            form.action = saveURI;
+            form.method = formMETHOD;
+            form.context.modal.show();
+        }
+
+       
     }
 
 }

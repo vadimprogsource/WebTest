@@ -28,6 +28,8 @@ public record ForkLiftModel : IForkLift
 
     IReadOnlyCollection<IForkFault> IForkLift.Faults => Array.Empty<IForkFault>();
 
+    bool IIdentity.IsValid => throw new NotImplementedException();
+
     private readonly struct UserInfo : IUser
     {
         private readonly string? name;
@@ -35,6 +37,8 @@ public record ForkLiftModel : IForkLift
         string IUser.Name => name ?? string.Empty;
 
         int IIdentity.Id { get => default; set { } }
+
+        bool IIdentity.IsValid => throw new NotImplementedException();
 
         public UserInfo(string? name)
         {

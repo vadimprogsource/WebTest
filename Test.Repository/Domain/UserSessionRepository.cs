@@ -12,7 +12,7 @@ public class UserSessionRepository : DataRepository<UserSession>
     }
 
 
-    protected override IQueryable<UserSession> OnJoinWith(DbSet<UserSession> dataSet) => dataSet.Include(x=>x.User);
+    protected override IQueryable<UserSession> OnJoinWith(DbSet<UserSession> dataSet) => dataSet;
 
 
     

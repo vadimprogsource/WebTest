@@ -12,7 +12,7 @@ public class User : IdentityObject, IUser
 
     public string Login { get; set; } = string.Empty;
 
-    public Guid Password { get; set; }
+    public Guid Password { get; set; } = Guid.Empty;
 
     public User() { }
     public User(IIdentity source) : base(source) => Name=source.ToString()??string.Empty; 
@@ -25,6 +25,9 @@ public class User : IdentityObject, IUser
         Password = new Guid(MD5.HashData(Encoding.ASCII.GetBytes($"{Login}/{password}")));
         return this;
     }
+
+
+    public override bool IsValid => base.IsValid && Password!=Guid.Empty;
 
 
 

@@ -14,6 +14,7 @@ using Microsoft.Extensions.FileProviders;
 using Test.AppService.Domain.Fork;
 using Test.AppService.Domain.Security;
 using Test.AppService.Domain.Fault;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 builder.Services.AddScoped<IAuthProvider, AuthProvider>();
-builder.Services.AddScoped<ISessionStorage, DataSessionStorage>();
-//builder.Services.AddScoped<ISessionStorage, MemorySessionStorage>();
+
 
 builder.Services.AddScoped<IDataRepository<User>, UserRepository>();
 builder.Services.AddScoped<IDataRepository<UserSession>, UserSessionRepository>();
@@ -56,6 +56,10 @@ builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataFactory>();
 builder.Services.AddScoped<IDataProvider<IForkLift>, ForkLiftDataProvider>();
 builder.Services.AddScoped<IDataService<IForkLift>, ForkLiftDataService>();
 
+
+//builder.Services.AddSingleton<IConnectionMultiplexer>(x =>ConnectionMultiplexer.Connect("localhost:6376,abortConnect=false"));
+
+
 switch (builder.Configuration.GetConnectionString("dbServer"))
 {
     case "pgSql":  builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql")));break;
@@ -65,6 +69,15 @@ switch (builder.Configuration.GetConnectionString("dbServer"))
 }
 
 
+switch (builder.Configuration.GetConnectionString("sts"))
+{
+    case "memory": builder.Services.AddSingleton<ISessionStorage, MemorySessionStorage>();break;
+    case "redis":
+                  builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect("localhost:6376,abortConnect=false"));
+                  builder.Services.AddScoped<ISessionStorage, RedisSessionStorage>();break;
+    default:
+                 builder.Services.AddScoped<ISessionStorage, DataSessionStorage>();break;
+}
 
 
 
@@ -145,6 +158,7 @@ if (app.Environment.IsDevelopment() || true)
 }
 
 app.UseAuthentication();
+app.UseMiddleware<AuthUserMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -154,13 +168,6 @@ app.UseCors("AllowAll");
 app.UseStaticFiles();
 
 
-if (app.Environment.IsDevelopment() || true)  app.Use(async (context, next) =>
-{
-    context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, proxy-revalidate";
-    context.Response.Headers["Pragma"] = "no-cache";
-    context.Response.Headers["Expires"] = "0";
-    await next();
-});
 
 
 app.Run();

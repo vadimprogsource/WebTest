@@ -12,16 +12,17 @@ namespace Test.Entity.Domain
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiredAt { get; set; }
         public Guid Guid { get; set; }
-        public User User { get; set; } = new User();
         public int UserId { get; set; }
 
         public bool HasExpired => ExpiredAt<= DateTime.UtcNow;
 
-        IUser IUserSession.User => User;
+ 
 
         public int Id { get => UserId; set => UserId = value; }
 
         public DateTime Expired => ExpiredAt;
+
+        public bool IsValid => ExpiredAt > DateTime.UtcNow;
 
         public UserSession() { }
 
@@ -29,7 +30,6 @@ namespace Test.Entity.Domain
         {
             CreatedAt = DateTime.UtcNow;
             ExpiredAt = CreatedAt.Add(DefaultExpiredTimeOut);
-            User = user;
             UserId = user.Id;
             Guid = Guid.NewGuid();
         }
@@ -41,7 +41,7 @@ namespace Test.Entity.Domain
             ExpiredAt = DateTime.UtcNow.Add(expiration);
        }
 
-
+ 
     }
 }
 

@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        return Ok(new { session.User.Name , session.Guid ,session.Expired });
+        return Ok(new { session.Guid ,session.Expired });
     }
 
 
@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized();
         }
-        string token = session.GenerateToken(); 
+        string token = AuthUser.GenerateToken(session); 
         Response.Headers["Authorization"] = $"Bearer {token}";
         return Ok(new { token});
     }

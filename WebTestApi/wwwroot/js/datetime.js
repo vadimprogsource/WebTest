@@ -40,3 +40,11 @@ function parseToISO(dateStr)
 
 }
 
+Handlebars.registerHelper("dateTime", function (value) {
+    if (value) {
+        return formatDateTime(value);
+    }
+
+    return "-";
+});
+
