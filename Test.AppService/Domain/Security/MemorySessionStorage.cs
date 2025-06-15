@@ -14,18 +14,19 @@ public class MemorySessionStorage : ISessionStorage
     
         public readonly DateTime CreatedAt;
         public readonly DateTime ExpiredAt;
-        public readonly int      UserId;
+        public readonly Guid      UserGuid;
 
         public SessionData(UserSession session)
         {
             CreatedAt = session.CreatedAt;
             ExpiredAt = session.ExpiredAt;
-            UserId = session.UserId;
+            UserGuid = session.Guid;
         }
     }
 
 
     private readonly Dictionary<Guid, SessionData> sts = new();
+    private readonly Queue<Tuple<DateTime, Guid>> sts_queue = new(); 
 
 
 
@@ -38,13 +39,14 @@ public class MemorySessionStorage : ISessionStorage
         UserSession session = new()
         {
             Guid = Guid.NewGuid(),
-            UserId = user.Id,
+            UserGuid = user.Guid,
             CreatedAt = createdAt,
             ExpiredAt = createdAt.Add(expired)
 
         };
 
         sts.Add(session.Guid, new SessionData(session));
+        sts_queue.Enqueue(Tuple.Create(session.Expired, session.Guid));
         return Task.FromResult((IUserSession) session);
     }
 
@@ -57,7 +59,14 @@ public class MemorySessionStorage : ISessionStorage
         }
     }
 
-    public Task DeleteExpiredSessions(DateTime expired) => DeleteSessions(x => x.ExpiredAt >= expired);
+    public async Task DeleteExpiredSessions(DateTime expired)
+    {
+        while (sts_queue.Peek().Item1 >= expired)
+        {
+            sts.Remove(sts_queue.Dequeue().Item2);
+            await Task.Delay(1);
+        }
+     }
 
     public Task DeleteSession(Guid guid)
     {
@@ -66,7 +75,7 @@ public class MemorySessionStorage : ISessionStorage
 
     }
 
-    public Task DeleteUserSessions(IUser user) => DeleteSessions(x => x.UserId == user.Id);
+    public Task DeleteUserSessions(IUser user) => DeleteSessions(x => x.UserGuid == user.Guid);
     
 
     public async Task<IUserSession> GetSessionAsync(Guid guid)
@@ -78,7 +87,7 @@ public class MemorySessionStorage : ISessionStorage
                 Guid = guid,
                 CreatedAt = session.CreatedAt,
                 ExpiredAt = session.ExpiredAt,
-                UserId = session.UserId,
+                UserGuid = session.UserGuid,
             };
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Test.Api.Domain;
 
-public interface IUser : IIdentity
+public interface IUser : IEntity
 {
     string Name { get; }
 }

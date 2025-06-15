@@ -3,7 +3,7 @@ namespace Test.Api.Domain
 {
     public interface IForkFaultService
     {
-        Task<IForkFault> AddFaultAsync(int forkId, IForkFault fault);
+        Task<IForkFault> AddFaultAsync(Guid forkGuid, IForkFault fault);
     }
 }
 

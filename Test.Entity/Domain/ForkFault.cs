@@ -3,7 +3,7 @@ using Test.Api.Domain;
 
 namespace Test.Entity.Domain
 {
-    public class ForkFault : IdentityObject , IForkFault
+    public class ForkFault : EntityBase , IForkFault
     {
        
         public DateTime ProblemDetectedAt { get; set; }
@@ -12,7 +12,7 @@ namespace Test.Entity.Domain
 
         public TimeSpan Downtime => (ProblemResolvedAt ?? ProblemDetectedAt) - ProblemDetectedAt;
 
-        public int ForkLiftId { get; set; }
+        public Guid ForkLiftGuid { get; set; }
         public ForkLift ForkLift { get; set; } = null!;
         public ForkFault() { ProblemDetectedAt = DateTime.UtcNow; }
 

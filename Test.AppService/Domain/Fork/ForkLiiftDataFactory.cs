@@ -23,7 +23,7 @@ namespace Test.AppService.Domain.Fork
                 ModifiedAt = DateTime.UtcNow
             };
 
-            fork.ModifiedById = fork.ModifiedBy.Id;
+            fork.ModifiedByGuid = fork.ModifiedBy.Guid;
 
             return fork;
         }

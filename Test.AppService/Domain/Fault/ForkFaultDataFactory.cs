@@ -7,11 +7,11 @@ namespace Test.AppService.Domain.Fault;
 
 public class ForkFaultDataFactory : DataFactory<IForkFault, ForkFault>, IForkFaultFactory
 {
-    public Task<IForkFault> CreateInstanceAsync(int forkId)
+    public Task<IForkFault> CreateInstanceAsync(Guid forkGuid)
     {
         ForkFault fault = new()
         {
-            ForkLiftId = forkId
+            ForkLiftGuid = forkGuid
         };
 
         return Task.FromResult((IForkFault)fault);

@@ -13,14 +13,14 @@ namespace Test.Repository.Domain
 
         protected override IQueryable<ForkLift> OnJoinWith(DbSet<ForkLift> dataSet) => dataSet.Include(x => x.ModifiedBy);
 
-        public async override Task<bool> DeleteAsync(int id)
+        public async override Task<bool> DeleteAsync(Guid guid)
         {
 
-            if(await Context.Set<ForkFault>().AnyAsync(x => x.ForkLiftId == id))
+            if(await Context.Set<ForkFault>().AnyAsync(x => x.ForkLiftGuid == guid))
             {
                 return false;
             }
-            return await base.DeleteAsync(id);
+            return await base.DeleteAsync(guid);
         }
 
     }

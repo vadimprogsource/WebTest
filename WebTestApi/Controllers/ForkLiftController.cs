@@ -12,10 +12,10 @@ namespace TestWebApi.Controllers
     public class ForkLiftController : ApiController<IForkLift, ForkLiftModel>
     {
     
-        [HttpPatch("active/{id}/{flag}")]
-        public async Task<IActionResult> SetActive([FromRoute] int id, [FromRoute] string flag)
+        [HttpPatch("active/{guid}/{flag}")]
+        public async Task<IActionResult> SetActive([FromRoute] Guid guid, [FromRoute] string flag)
         {
-            IForkLift fork = await Resolve<IForkLiftService>().SetActiveAsync(id, string.Compare(flag, "on", true) == 0 || string.Compare(flag, "true", true) == 0);
+            IForkLift fork = await Resolve<IForkLiftService>().SetActiveAsync(guid, string.Compare(flag, "on", true) == 0 || string.Compare(flag, "true", true) == 0);
             return Ok(ToModel(fork));
         }
 

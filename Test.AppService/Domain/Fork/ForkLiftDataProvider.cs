@@ -6,7 +6,7 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fork;
 
-public class ForkLiftDataProvider : DataProvider<IForkLift, ForkLift> 
+public class ForkLiftDataProvider : EntityDataProvider<IForkLift, ForkLift> 
 {
 
 

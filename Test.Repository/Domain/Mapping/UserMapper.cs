@@ -6,7 +6,7 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public class UserMapper : DataMapper<User>
+    public class UserMapper : EntityDataMapper<User>
     {
         public UserMapper(ModelBuilder modelBuilder) : base(modelBuilder)
         {
@@ -14,10 +14,10 @@ namespace Test.Repository.Domain.Mapping
 
         protected override void Map(EntityTypeBuilder<User> entity)
         {
-            entity.HasKey(x => x.Id);
+            base.Map(entity);
 
             Guid password = new User { Login = "admin" }.SetPassword("1").Password;
-            entity.HasData(new User {Id =1 , Name = "Admin",Login = "admin", Password =password });
+            entity.HasData(new User {Guid =Guid.NewGuid() , Name = "Admin",Login = "admin", Password =password });
         }
     }
 }

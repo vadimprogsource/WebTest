@@ -11,6 +11,8 @@ namespace TestWebApi.Services;
 public class AuthUser: ClaimsPrincipal
 {
 
+    const string AUTH = "Authorization";
+
     private readonly struct EmptySession : IUserSession
     {
         public Guid Guid => Guid.Empty;
@@ -19,7 +21,9 @@ public class AuthUser: ClaimsPrincipal
 
         public DateTime Expired => DateTime.MinValue;
 
-        public int UserId => 0;
+        public Guid UserGuid => Guid.Empty;
+
+        public bool IsValid => false;
     }
 
     private static readonly IUserSession Empty = new EmptySession();
@@ -46,6 +50,25 @@ public class AuthUser: ClaimsPrincipal
          );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public static string SetAuthorize(HttpContext context ,  IUserSession session)
+    {
+        string token = GenerateToken(session);
+        context.Response.Headers[AUTH] = $"Bearer {token}";
+        context.Response.Cookies.Append(AUTH, token);
+        return token;
+    }
+
+    public static void SignOut(HttpContext context)
+    {
+        context.Response.Headers[AUTH] = string.Empty;
+        context.Response.Cookies.Delete(AUTH);
+
+        if(context.User is AuthUser u)
+        {
+            context.User = u.principal;
+        }
     }
 
 

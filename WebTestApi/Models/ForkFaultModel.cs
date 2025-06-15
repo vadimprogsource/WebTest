@@ -8,7 +8,7 @@ namespace TestWebApi.Models
     {
     
 
-        public int Id { get; set; }
+        public Guid Guid { get; set; }
         public DateTime? ProblemDetectedAt { get; set; }
         public DateTime? ProblemResolvedAt { get; set; }
         public string? Reason { get; set; }
@@ -19,13 +19,15 @@ namespace TestWebApi.Models
 
         DateTime IForkFault.ProblemDetectedAt => ProblemDetectedAt.HasValue ? ProblemDetectedAt.Value.ToUniversalTime() : DateTime.UtcNow;
 
-        bool IIdentity.IsValid => throw new NotImplementedException();
+        bool IIdentity.IsValid => true;
+
+        DateTime IEntity.CreatedAt => DateTime.UtcNow;
 
         public ForkFaultModel() { }
 
         public ForkFaultModel(IForkFault source)
         {
-            Id = source.Id;
+            Guid = source.Guid;
             ProblemDetectedAt = source.ProblemDetectedAt.ToLocalTime();
             ProblemResolvedAt = source.ProblemResolvedAt.HasValue?source.ProblemResolvedAt.Value.ToLocalTime(): null;
             Reason = source.Reason;

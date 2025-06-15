@@ -3,6 +3,6 @@ namespace Test.Api.Domain;
 
 public interface IForkLiftService
 {
-    Task<IForkLift> SetActiveAsync(int id, bool active);
+    Task<IForkLift> SetActiveAsync(Guid guid, bool active);
 }
 

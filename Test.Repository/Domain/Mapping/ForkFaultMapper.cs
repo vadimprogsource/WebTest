@@ -6,7 +6,7 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public class ForkFaultMapper : DataMapper<ForkFault>
+    public class ForkFaultMapper : EntityDataMapper<ForkFault>
     {
         public ForkFaultMapper(ModelBuilder modelBuilder) : base(modelBuilder)
         {
@@ -14,8 +14,8 @@ namespace Test.Repository.Domain.Mapping
 
         protected override void Map(EntityTypeBuilder<ForkFault> entity)
         {
-            entity.HasKey(x => x.Id);
-            entity.HasOne(x => x.ForkLift).WithMany().HasForeignKey(x => x.ForkLiftId).OnDelete(DeleteBehavior.ClientNoAction);
+            base.Map(entity);
+            entity.HasOne(x => x.ForkLift).WithMany().HasForeignKey(x => x.ForkLiftGuid);
         }
     }
 }

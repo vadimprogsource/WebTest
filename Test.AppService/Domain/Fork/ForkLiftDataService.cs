@@ -6,7 +6,7 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fork
 {
-    public class ForkLiftDataService : DataService<IForkLift, ForkLift> , IForkLiftService
+    public class ForkLiftDataService : EntityDataService<IForkLift, ForkLift> , IForkLiftService
     {
         public ForkLiftDataService(IUserContext context, IDataRepository<ForkLift> repository) : base(context, repository)
         {
@@ -16,7 +16,7 @@ namespace Test.AppService.Domain.Fork
         {
             entity.ModifiedAt = DateTime.UtcNow;
             entity.ModifiedBy = (User)(await UserContext.GetUserAsync());
-            entity.ModifiedById = entity.ModifiedBy.Id;
+            entity.ModifiedByGuid = entity.ModifiedBy.Guid;
             return entity;
         }
 
@@ -27,9 +27,9 @@ namespace Test.AppService.Domain.Fork
         public override Task<ForkLift> OnUpdateAsync(IForkLift source, ForkLift entity) => UpdateModifiedAsync(entity.Update(source));
 
 
-        public async Task<IForkLift> SetActiveAsync(int id, bool active)
+        public async Task<IForkLift> SetActiveAsync(Guid guid, bool active)
         {
-            ForkLift obj = await Repository.SelectAsync(id);
+            ForkLift obj = await Repository.SelectAsync(guid);
 
             if (obj.IsActive != active)
             {

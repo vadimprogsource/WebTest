@@ -5,17 +5,17 @@ namespace Test.Entity;
 
 public class IdentityObject : IIdentity
 {
-    public int Id { get; set; }
+    public Guid Guid { get; set; }
 
-    public virtual bool IsValid => Id != 0;
+    public virtual bool IsValid => Guid != Guid.Empty;
 
-    public override int GetHashCode() => Id;
+    public override int GetHashCode() => Guid.GetHashCode();
 
-    public override bool Equals(object? obj) => obj?.GetType() == GetType() && Id == obj.GetHashCode();
+    public override bool Equals(object? obj) => obj?.GetType() == GetType() && obj is IIdentity i &&  Guid == i.Guid;
 
 
     public IdentityObject() { }
-    public IdentityObject(IIdentity source) => Id = source.Id; 
+    public IdentityObject(IIdentity source) => Guid = source.Guid; 
 
 }
 

@@ -6,7 +6,7 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fault;
 
-public class ForkFaultDataService : DataService<IForkFault, ForkFault> , IForkFaultService
+public class ForkFaultDataService : EntityDataService<IForkFault, ForkFault> , IForkFaultService
 {
     private readonly IDataRepository<ForkLift> fork_lift_repository;
 
@@ -24,14 +24,14 @@ public class ForkFaultDataService : DataService<IForkFault, ForkFault> , IForkFa
 
 
 
-    public async Task<IForkFault> AddFaultAsync(int forkId, IForkFault fault)
+    public async Task<IForkFault> AddFaultAsync(Guid forkGuid, IForkFault fault)
     {
         ForkFault entity = new ForkFault().Update(fault);
-        entity.ForkLift = await fork_lift_repository.SelectAsync(forkId);
-        entity.ForkLiftId = entity.ForkLift.Id;
-
+        entity.ForkLift = await fork_lift_repository.SelectAsync(forkGuid);
+        entity.ForkLiftGuid = entity.ForkLift.Guid;
+        OnInsertNewAsync(entity);
         entity = await Repository.InsertAsync(entity);
-        return await Repository.SelectAsync(entity.Id);
+        return await Repository.SelectAsync(entity.Guid);
     }
 }
 

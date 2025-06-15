@@ -15,10 +15,7 @@
                 const obj = model[i];
                 obj.index = 1 + i;
 
-                if (this.selected && this.selected.id === obj.id)
-                {
-                    obj.selected = true;
-                }
+                obj.selected = this.selected && this.selected.guid === obj.guid; 
                 return obj; 
             }
 
@@ -51,12 +48,12 @@
             {
                 if (x)
                 {
-                    return { id: x.id, number: x.number }; 
+                    return { id: x.guid, number: x.number }; 
                 }
                 if (data && data.length)
                 {
                     x = data[0];
-                    return { id: x.id, number: x.number }; 
+                    return { id: x.guid, number: x.number }; 
                 }
                 return this.selected;
             } 

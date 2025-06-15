@@ -4,9 +4,8 @@ using Test.Api.Domain;
 
 namespace TestWebApi.Models;
 
-public record ForkLiftModel : IForkLift
+public record ForkLiftModel : EntityModel  ,  IForkLift
 {
-    public int Id { get; set; }
 
     public string? Brand { get; set; }
 
@@ -28,7 +27,6 @@ public record ForkLiftModel : IForkLift
 
     IReadOnlyCollection<IForkFault> IForkLift.Faults => Array.Empty<IForkFault>();
 
-    bool IIdentity.IsValid => throw new NotImplementedException();
 
     private readonly struct UserInfo : IUser
     {
@@ -36,9 +34,11 @@ public record ForkLiftModel : IForkLift
 
         string IUser.Name => name ?? string.Empty;
 
-        int IIdentity.Id { get => default; set { } }
+        Guid IIdentity.Guid => Guid.Empty;
 
-        bool IIdentity.IsValid => throw new NotImplementedException();
+        bool IIdentity.IsValid => true;
+
+        DateTime IEntity.CreatedAt => DateTime.UtcNow;
 
         public UserInfo(string? name)
         {
@@ -52,7 +52,7 @@ public record ForkLiftModel : IForkLift
 
     public ForkLiftModel(IForkLift source)
     {
-        Id = source.Id;
+        Guid = source.Guid;
         Brand = source.Brand;
         Number = source.Number;
         Capacity = source.Capacity;

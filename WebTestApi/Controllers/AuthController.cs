@@ -44,9 +44,8 @@ public class AuthController : ControllerBase
         {
             return Unauthorized();
         }
-        string token = AuthUser.GenerateToken(session); 
-        Response.Headers["Authorization"] = $"Bearer {token}";
-        return Ok(new { token});
+
+        return Ok(new {Token= AuthUser.SetAuthorize(HttpContext, session) });
     }
 
 
@@ -61,6 +60,7 @@ public class AuthController : ControllerBase
         }
 
         await auth_provider.SignOutAsync(session);
+        AuthUser.SignOut(HttpContext);
         return Ok();
     }
 

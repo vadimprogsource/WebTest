@@ -77,7 +77,7 @@ namespace Test.AppService.Domain
                 throw new AccessViolationException();
             }
 
-            IUser user = await user_repository.SelectAsync(session.UserId);
+            IUser user = await user_repository.SelectAsync(session.UserGuid);
             return user;
         }
 

@@ -19,7 +19,7 @@ namespace Test.AppService.Domain.Security
             UserSession session = new ()
             {
                 Guid = Guid.NewGuid(),
-                UserId = user.Id,
+                UserGuid = user.Guid,
                 CreatedAt = createdAt,
                 ExpiredAt = createdAt.Add(expired)
 
@@ -34,7 +34,7 @@ namespace Test.AppService.Domain.Security
 
         public Task DeleteSession(Guid guid) => repository.DeleteAsync(x => x.Guid == guid);
    
-        public Task DeleteUserSessions(IUser user) => repository.DeleteAsync(x => x.UserId == user.Id);
+        public Task DeleteUserSessions(IUser user) => repository.DeleteAsync(x => x.UserGuid == user.Guid);
         
 
        

@@ -15,31 +15,31 @@ namespace TestWebApi.Controllers
         
 
 
-        [HttpGet("new/{ownerId}")]
-        public async Task<IActionResult> GetNewAsync([FromRoute] int ownerId) => Ok(ToModel(await Resolve<IForkFaultFactory>().CreateInstanceAsync(ownerId)));
+        [HttpGet("new/{ownerGuid}")]
+        public async Task<IActionResult> GetNewAsync([FromRoute] Guid ownerGuid) => Ok(ToModel(await Resolve<IForkFaultFactory>().CreateInstanceAsync(ownerGuid)));
 
 
 
-        [HttpPost("{ownerId}")]
-        public virtual async Task<IActionResult> PostAsync([FromRoute]int ownerId, [FromBody] FilterModel filter)
+        [HttpPost("{ownerGuid}")]
+        public virtual async Task<IActionResult> PostAsync([FromRoute]Guid ownerGuid, [FromBody] FilterModel filter)
         {
             if (filter.MaxCount < 1 || filter.MaxCount > 1000)
             {
                 filter.MaxCount = 50;
             }
            
-           IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerId , filter);
+           IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerGuid , filter);
            return Ok(entities.Select(ToModel));
            
         }
 
 
-        [HttpPut("{ownerId}")]
-        public async Task<IActionResult> PutAsync([FromRoute]int ownerId, [FromBody] ForkFaultModel model)
+        [HttpPut("{ownerGuid}")]
+        public async Task<IActionResult> PutAsync([FromRoute]Guid ownerGuid, [FromBody] ForkFaultModel model)
         {
             if (Validator.Validate(model))
             {
-                IForkFault entity = await Resolve<IForkFaultService>().AddFaultAsync(ownerId,model);
+                IForkFault entity = await Resolve<IForkFaultService>().AddFaultAsync(ownerGuid, model);
                 return Ok(ToModel(entity));
             }
 

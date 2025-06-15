@@ -2,7 +2,7 @@
 namespace Test.Api.Domain;
 
 
-public interface IForkLift : IIdentity
+public interface IForkLift : IEntity
 {
  
     string Brand { get; }

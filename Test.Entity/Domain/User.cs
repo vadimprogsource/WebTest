@@ -6,7 +6,7 @@ using Test.Api.Domain;
 
 namespace Test.Entity.Domain;
 
-public class User : IdentityObject, IUser
+public class User : EntityBase, IUser
 {
     public string Name { get; set; } = string.Empty;
 
@@ -14,8 +14,8 @@ public class User : IdentityObject, IUser
 
     public Guid Password { get; set; } = Guid.Empty;
 
-    public User() { }
-    public User(IIdentity source) : base(source) => Name=source.ToString()??string.Empty; 
+    public User():base() { }
+    public User(IEntity source) : base(source) => Name=source.ToString()??string.Empty; 
 
     public User(IUser source) : base(source) => Name = source.Name;
 

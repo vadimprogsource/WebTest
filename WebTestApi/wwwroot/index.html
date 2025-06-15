@@ -120,19 +120,19 @@
                                 <tbody>
                                   <script type="text/x-handlebars-template">
 
-                                    <tr data-id="{{id}}" data-number="{{number}}" onclick="forkView.select(this)" {{#if selected}}class="active"{{/if}}>
+                                    <tr data-guid="{{guid}}" data-number="{{number}}" onclick="forkView.select(this)" {{#if selected}}class="active"{{/if}}>
                                         <td>{{index}}</td>
                                         <td>{{brand}}</td>
                                         <td>{{number}}</td>
                                         <td align="center">{{capacity}}</td>
                                         <td align="center">
-                                            <input type="checkbox" value="{{id}}"{{#if isActive}}checked="checked"{{/if}} onclick="forkView.setActive(this)" />
+                                            <input type="checkbox" value="{{guid}}"{{#if isActive}}checked="checked"{{/if}} onclick="forkView.setActive(this)" />
                                         </td>
                                         <td>{{dateTime modifiedAt}}</td>
                                         <td>{{modifiedBy}}</td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editFork({{id}})">✎</button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFork({{id}})">✖</button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editFork('{{guid}}')">✎</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFork('{{guid}}')">✖</button>
                                         </td>
                                     </tr>
 
@@ -160,15 +160,15 @@
                                 </thead>
                                 <tbody>
                                     <script type="text/x-handlebars-template">
-                                    <tr>
+                                    <tr data-guid="{{guid}}">
                                         <td>{{index}}</td>
                                         <td>{{dateTime problemDetectedAt}}</td>
                                         <td>{{dateTime problemResolvedAt}}</td>
                                         <td>{{downtime}}</td>
                                         <td>{{reason}}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-outline-secondary" onclick="editFailure({{id}})" >✎</button>
-                                            <button class="btn btn-sm btn-outline-danger"   onclick="deleteFailure({{id}})">✖</button>
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="editFailure('{{guid}}')" >✎</button>
+                                            <button class="btn btn-sm btn-outline-danger"   onclick="deleteFailure('{{guid}}')">✖</button>
                                         </td>
                                     </tr>
                                     </script>

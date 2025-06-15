@@ -7,15 +7,15 @@ using Test.Api.Infrastructure;
 
 namespace Test.AppService.Domain.Fault;
 
-public class ForkFaultDataProvider : DataProvider<IForkFault, ForkFault> , IForkFaultProvider
+public class ForkFaultDataProvider : EntityDataProvider<IForkFault, ForkFault> , IForkFaultProvider
 {
     public ForkFaultDataProvider(IDataRepository<ForkFault> repository) : base(repository)
     {
     }
    
-    public async Task<IForkFault[]> GetFaultsAsync(int forkId, IFilterData filter)
+    public async Task<IForkFault[]> GetFaultsAsync(Guid forkGuid, IFilterData filter)
     {
-        return await Repository.SelectAsync(query => ApplyFilter( query.Where(x => x.ForkLiftId == forkId),filter));
+        return await Repository.SelectAsync(query => ApplyFilter( query.Where(x => x.ForkLiftGuid == forkGuid),filter));
     }
 }
 

@@ -3,7 +3,7 @@ using Test.Api.Domain;
 
 namespace Test.Entity.Domain
 {
-    public class ForkLift : IdentityObject , IForkLift
+    public class ForkLift : EntityBase , IForkLift
     {
         public string Brand { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ namespace Test.Entity.Domain
         public DateTime ModifiedAt { get; set; } = DateTime.Now;
         public User ModifiedBy { get; set; } = new User();
 
-        public int ModifiedById { get; set; }
+        public Guid ModifiedByGuid { get; set; }
 
         public List<ForkFault> Faults { get; set; } = new();
 
@@ -32,7 +32,7 @@ namespace Test.Entity.Domain
 
             if (source.ModifiedBy != null)
             {
-                ModifiedById = source.ModifiedBy.Id; 
+                ModifiedByGuid = source.ModifiedBy.Guid; 
             }
 
             

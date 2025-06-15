@@ -27,9 +27,9 @@ namespace Test.Repository.Infrastructure
             return entity;
         }
 
-        public virtual async Task<bool> DeleteAsync(int Id)
+        public virtual async Task<bool> DeleteAsync(Guid guid)
         {
-            return await Context.Set<TEntity>().Where(x => x.Id == Id).ExecuteDeleteAsync() > 0;
+            return await Context.Set<TEntity>().Where(x => x.Guid == guid).ExecuteDeleteAsync() > 0;
         }
 
       
@@ -49,9 +49,9 @@ namespace Test.Repository.Infrastructure
             return await filter(OnJoinWith(Context.Set<TEntity>())).ToArrayAsync();
         }
 
-        public virtual Task<TEntity> SelectAsync(int id)
+        public virtual Task<TEntity> SelectAsync(Guid guid)
         {
-            return OnJoinWith(Context.Set<TEntity>()).SingleAsync(x => x.Id == id);
+            return OnJoinWith(Context.Set<TEntity>()).SingleAsync(x => x.Guid == guid);
         }
 
 

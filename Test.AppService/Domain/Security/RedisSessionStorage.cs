@@ -17,20 +17,20 @@ public class RedisSessionStorage : ISessionStorage
         this.redis = redis.GetDatabase();
     }
 
-    private static string GetSessionKey(Guid sessionId) => $"redis_key_{sessionId:x}";
-    private static string GetUserSessionsKey(int userId) => $"redis_session_{userId}";
+    private static string GetSessionKey(Guid guid) => $"redis_key_{guid:x}";
+    private static string GetUserSessionsKey(Guid guid) => $"redis_session_{guid}";
 
     public async Task<IUserSession> CreateSessionAsync(IUser user, DateTime createdAt, TimeSpan expired)
     {
         UserSession session = new ()
         {
             Guid = Guid.NewGuid(),
-            UserId = user.Id,
+            UserGuid = user.Guid,
             CreatedAt = createdAt,
             ExpiredAt = createdAt.Add(expired)
         };
 
-        await redis.SetAddAsync(GetUserSessionsKey(user.Id), SessionSerializationContext.Serialize(session));
+        await redis.SetAddAsync(GetUserSessionsKey(user.Guid), SessionSerializationContext.Serialize(session));
         return session;
     }
 
@@ -61,13 +61,13 @@ public class RedisSessionStorage : ISessionStorage
         if (session != null)
         {
             await redis.KeyDeleteAsync(GetSessionKey(guid));
-            await redis.SetRemoveAsync(GetUserSessionsKey(session.UserId), guid.ToString());
+            await redis.SetRemoveAsync(GetUserSessionsKey(session.UserGuid), guid.ToString());
         }
     }
 
     public async Task DeleteUserSessions(IUser user)
     {
-        string userSessionsKey = GetUserSessionsKey(user.Id);
+        string userSessionsKey = GetUserSessionsKey(user.Guid);
         var sessionIds = await redis.SetMembersAsync(userSessionsKey);
 
         foreach (var sessionId in sessionIds)

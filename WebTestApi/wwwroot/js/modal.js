@@ -21,7 +21,7 @@
             }
             new bootstrap.Modal(win).show();
         }
-
+        
 
     } catch (error) {
         console.error("Ошибка при загрузке неисправностей:", error);

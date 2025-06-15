@@ -27,10 +27,10 @@ namespace TestWebApi.Controllers
         protected abstract TModel ToModel(TEntity entity);
 
 
-        [HttpGet("{id}")]
-        public virtual async  Task<IActionResult> GetAsync(int id)
+        [HttpGet("{guid}")]
+        public virtual async  Task<IActionResult> GetAsync(Guid guid)
         {
-            TEntity entity = await  Provider.GetByIdAsync(id);
+            TEntity entity = await  Provider.GetDataAsync(guid);
             return Ok(ToModel(entity));
         }
 
@@ -83,9 +83,9 @@ namespace TestWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public virtual async Task<IActionResult> DeleteAsync(int id)
+        public virtual async Task<IActionResult> DeleteAsync(Guid guid)
         {
-            if (await Service.ExecuteDeleteAsync(id))
+            if (await Service.ExecuteDeleteAsync(guid))
             {
                 return Ok();
             }

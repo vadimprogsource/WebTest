@@ -5,7 +5,7 @@ namespace Test.Api.Infrastructure
     {
         Task<TEntity> InserNewAsync     (TEntity entity);
         Task<TEntity> ApplyUpdateAsync  (TEntity entity);
-        Task<bool>    ExecuteDeleteAsync(int Id);
+        Task<bool>    ExecuteDeleteAsync(Guid guid);
     }
 }
 

@@ -6,7 +6,7 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public class ForkLiftMapper : DataMapper<ForkLift>
+    public class ForkLiftMapper : EntityDataMapper<ForkLift>
     {
         public ForkLiftMapper(ModelBuilder modelBuilder) : base(modelBuilder)
         {
@@ -14,9 +14,9 @@ namespace Test.Repository.Domain.Mapping
 
         protected override void Map(EntityTypeBuilder<ForkLift> entity)
         {
-            entity.HasKey(x => x.Id);
+            base.Map(entity);
             entity.Property(x => x.Capacity).HasPrecision(10, 3);
-            entity.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedById);
+            entity.HasOne(x => x.ModifiedBy).WithMany().HasForeignKey(x => x.ModifiedByGuid);
             entity.Ignore(x => x.Faults);
         }
     }

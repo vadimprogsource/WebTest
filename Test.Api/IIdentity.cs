@@ -3,7 +3,7 @@ namespace Test.Api
 {
     public interface IIdentity
     {
-        int Id { get; set; }
+        Guid Guid    { get; }
         bool IsValid { get; }
     }
 }

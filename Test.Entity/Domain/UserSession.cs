@@ -4,34 +4,29 @@ using Test.Api.Domain;
 
 namespace Test.Entity.Domain
 {
-    public class UserSession  : IUserSession,IIdentity
+    public class UserSession  : EntityBase , IUserSession
     {
         public static readonly TimeSpan     DefaultExpiredTimeOut = TimeSpan.FromHours(1); 
         public static readonly IUserSession Empty = new UserSession();
 
-        public DateTime CreatedAt { get; set; }
         public DateTime ExpiredAt { get; set; }
-        public Guid Guid { get; set; }
-        public int UserId { get; set; }
+        public Guid UserGuid { get; set; }
 
         public bool HasExpired => ExpiredAt<= DateTime.UtcNow;
 
  
 
-        public int Id { get => UserId; set => UserId = value; }
 
         public DateTime Expired => ExpiredAt;
 
-        public bool IsValid => ExpiredAt > DateTime.UtcNow;
-
         public UserSession() { }
 
-        public UserSession(User user)
+        public UserSession(User user) 
         {
             CreatedAt = DateTime.UtcNow;
             ExpiredAt = CreatedAt.Add(DefaultExpiredTimeOut);
-            UserId = user.Id;
             Guid = Guid.NewGuid();
+            UserGuid = user.Guid;
         }
 
 

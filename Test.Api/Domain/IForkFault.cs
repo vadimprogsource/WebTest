@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Test.Api.Domain;
 
-public interface IForkFault : IIdentity
+public interface IForkFault : IEntity
 {
     DateTime ProblemDetectedAt { get;  }
     DateTime? ProblemResolvedAt { get; }

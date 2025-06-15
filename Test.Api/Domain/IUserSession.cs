@@ -1,12 +1,11 @@
 ﻿using System;
 namespace Test.Api.Domain
 {
-    public interface IUserSession
+    public interface IUserSession : IIdentity
     {
-        Guid Guid { get; }
         bool HasExpired { get; }
         DateTime Expired { get; }
-        int  UserId { get; }
+        Guid  UserGuid { get; }
     }
 }
 
