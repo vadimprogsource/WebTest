@@ -62,7 +62,7 @@ namespace TestWebApi.Controllers
         {
             if (Validator.Validate(model))
             {
-                TEntity entity = await Service.InserNewAsync(model);
+                TEntity entity = await Service.InsertNewAsync(model);
                 return Ok(ToModel(entity));
             }
 

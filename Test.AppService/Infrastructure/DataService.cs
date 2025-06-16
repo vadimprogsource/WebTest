@@ -2,6 +2,7 @@
 using Test.Api;
 using Test.Api.Infrastructure;
 using Test.Entity;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Test.AppService.Infrastructure;
 
@@ -16,26 +17,36 @@ public abstract class DataService<TInterface, TEntity> : IDataService<TInterface
         UserContext = context;
     }
 
-    public abstract Task<TEntity> OnCreateNewAsync(TInterface source);
-    public abstract void          OnInsertNewAsync(TEntity entity);
-    public abstract Task<TEntity> OnUpdateAsync(TInterface source, TEntity entity);
 
 
-    public virtual async Task<TInterface> ApplyUpdateAsync(TInterface entity)
+    public async Task<TInterface> InsertNewAsync(TInterface entity)
+    {
+        TEntity data = await OnCreateNewAsync(entity);
+        return await InsertNewAsync(data);
+
+    }
+
+
+    protected virtual async Task<TEntity> InsertNewAsync(TEntity entity)
+    {
+        return await Repository.InsertAsync(entity);
+    }
+
+
+    public async Task<TInterface> ApplyUpdateAsync(TInterface entity)
     {
         TEntity data = await Repository.SelectAsync(entity.Guid);
         data = await OnUpdateAsync(entity, data);
-        return await Repository.UpdateAsync(data);
+        return await ApplyUpdateAsync(data);
     }
-
-
-    public virtual async Task<TInterface> InserNewAsync(TInterface entity)
+    protected async Task<TEntity> ApplyUpdateAsync(TEntity entity)
     {
-        TEntity data = await OnCreateNewAsync(entity);
-        OnInsertNewAsync(data);
-        data = await Repository.InsertAsync(data);
-        return await Repository.SelectAsync(data.Guid);
+        return await Repository.UpdateAsync(entity);
     }
+
+    public abstract Task<TEntity> OnCreateNewAsync(TInterface source);
+    public abstract Task<TEntity> OnUpdateAsync(TInterface source, TEntity entity);
+
 
     public virtual Task<bool> ExecuteDeleteAsync(Guid guid) => Repository.DeleteAsync(guid);
 }
@@ -46,10 +57,11 @@ public abstract class EntityDataService<TInterface, TEntity> : DataService<TInte
     {
     }
 
-    public override void OnInsertNewAsync(TEntity entity)
+    protected override Task<TEntity> InsertNewAsync(TEntity entity)
     {
         entity.Guid = Guid.NewGuid();
         entity.CreatedAt = DateTime.UtcNow;
+        return base.InsertNewAsync(entity);
     }
 
 }

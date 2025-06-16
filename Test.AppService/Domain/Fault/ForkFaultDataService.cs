@@ -29,9 +29,8 @@ public class ForkFaultDataService : EntityDataService<IForkFault, ForkFault> , I
         ForkFault entity = new ForkFault().Update(fault);
         entity.ForkLift = await fork_lift_repository.SelectAsync(forkGuid);
         entity.ForkLiftGuid = entity.ForkLift.Guid;
-        OnInsertNewAsync(entity);
-        entity = await Repository.InsertAsync(entity);
-        return await Repository.SelectAsync(entity.Guid);
+        return await InsertNewAsync(entity);
+
     }
 }
 
