@@ -9,19 +9,19 @@ namespace Test.AppService.Infrastructure;
 public abstract class DataService<TInterface, TEntity> : IDataService<TInterface> where TInterface : IIdentity where TEntity : class, TInterface
 {
     protected readonly IDataRepository<TEntity> Repository;
-    protected readonly IUserContext UserContext;
+    protected readonly IDataMapper<TInterface, TEntity> Mapper;
 
-    public DataService(IUserContext context, IDataRepository<TEntity> repository)
+    public DataService(IDataRepository<TEntity> repository, IDataMapper<TInterface, TEntity> mapper)
     {
         Repository = repository;
-        UserContext = context;
+        Mapper = mapper;
     }
 
 
 
     public async Task<TInterface> InsertNewAsync(TInterface entity)
     {
-        TEntity data = await OnCreateNewAsync(entity);
+        TEntity data =  Mapper.New(entity);
         return await InsertNewAsync(data);
 
     }
@@ -33,19 +33,17 @@ public abstract class DataService<TInterface, TEntity> : IDataService<TInterface
     }
 
 
-    public async Task<TInterface> ApplyUpdateAsync(TInterface entity)
+    public async  Task<TInterface> ApplyUpdateAsync(TInterface entity)
     {
         TEntity data = await Repository.SelectAsync(entity.Guid);
-        data = await OnUpdateAsync(entity, data);
+        Mapper.Map(entity,data);
         return await ApplyUpdateAsync(data);
     }
-    protected async Task<TEntity> ApplyUpdateAsync(TEntity entity)
+    protected virtual async Task<TEntity> ApplyUpdateAsync(TEntity entity)
     {
         return await Repository.UpdateAsync(entity);
     }
 
-    public abstract Task<TEntity> OnCreateNewAsync(TInterface source);
-    public abstract Task<TEntity> OnUpdateAsync(TInterface source, TEntity entity);
 
 
     public virtual Task<bool> ExecuteDeleteAsync(Guid guid) => Repository.DeleteAsync(guid);
@@ -53,7 +51,7 @@ public abstract class DataService<TInterface, TEntity> : IDataService<TInterface
 
 public abstract class EntityDataService<TInterface, TEntity> : DataService<TInterface, TEntity> where TInterface : IEntity where TEntity : EntityBase, TInterface
 {
-    protected EntityDataService(IUserContext context, IDataRepository<TEntity> repository) : base(context, repository)
+    protected EntityDataService(IDataRepository<TEntity> repository, IDataMapper<TInterface, TEntity> mapper) : base(repository, mapper)
     {
     }
 
@@ -65,4 +63,6 @@ public abstract class EntityDataService<TInterface, TEntity> : DataService<TInte
     }
 
 }
+
+
 

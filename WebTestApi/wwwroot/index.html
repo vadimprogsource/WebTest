@@ -192,7 +192,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
                     <div class="modal-body">
-                        <input name="id" type="hidden" />
+                        <input name="guid" type="hidden" />
                         <div class="mb-3">
                             <label class="form-label" for="brand">Модель</label>
                             <input type="text" class="form-control" name="brand">
@@ -235,7 +235,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <form form-method="" form-uri="" onsubmit="postSubmit(this)">
-                    <input name="id" type="hidden" />
+                    <input name="guid" type="hidden" />
                     <div class="modal-header">
                         <h5 class="modal-title" id="addProtocolModalLabel">Проблемы с погрузчиком? опишите </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
@@ -353,9 +353,9 @@
             await modal.show("fork/lift/" + id, "addLoaderModal", "PATCH", "fork/lift", x => refreshFork(x));
         }
 
-        async function deleteFork(id)
+        async function deleteFork(guid)
         {
-            await del("fork/lift/" + id, x => refreshFork(x));
+            await del("fork/lift/" + guid, x => refreshFork(x));
         }
 
         async function refreshForkFailure(x)
@@ -382,9 +382,9 @@
             await modal.show("fork/lift/fault/" + id, "addProtocolModal", "PATCH", "fork/lift/fault/", x => refreshForkFailure(x));
         }
 
-        async function deleteFailure(id)
+        async function deleteFailure(guid)
         {
-            await del("fork/lift/fault/" + id, () => refreshForkFailure(null));
+            await del("fork/lift/fault/" + guid, () => refreshForkFailure(null));
         }
 
 

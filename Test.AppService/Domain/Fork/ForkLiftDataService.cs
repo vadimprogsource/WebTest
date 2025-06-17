@@ -8,23 +8,34 @@ namespace Test.AppService.Domain.Fork
 {
     public class ForkLiftDataService : EntityDataService<IForkLift, ForkLift> , IForkLiftService
     {
-        public ForkLiftDataService(IUserContext context, IDataRepository<ForkLift> repository) : base(context, repository)
+
+        private readonly IUserContext userContext;
+
+        public ForkLiftDataService(IDataRepository<ForkLift> repository, IDataMapper<IForkLift, ForkLift> mapper,IUserContext context) : base(repository, mapper)
         {
+            userContext = context;
         }
 
         private async Task<ForkLift> UpdateModifiedAsync(ForkLift entity)
         {
             entity.ModifiedAt = DateTime.UtcNow;
-            entity.ModifiedBy = (User)(await UserContext.GetUserAsync());
+            entity.ModifiedBy = (User)(await userContext.GetUserAsync());
             entity.ModifiedByGuid = entity.ModifiedBy.Guid;
             return entity;
         }
 
 
+        protected override async Task<ForkLift> InsertNewAsync(ForkLift entity)
+        {
+            await UpdateModifiedAsync(entity);
+            return await base.InsertNewAsync(entity);
+        }
 
-        public override Task<ForkLift> OnCreateNewAsync(IForkLift source) => UpdateModifiedAsync(new ForkLift().Update(source));
-
-        public override Task<ForkLift> OnUpdateAsync(IForkLift source, ForkLift entity) => UpdateModifiedAsync(entity.Update(source));
+        protected override async Task<ForkLift> ApplyUpdateAsync(ForkLift entity)
+        {
+            await UpdateModifiedAsync(entity);
+            return await base.ApplyUpdateAsync(entity);
+        }
 
 
         public async Task<IForkLift> SetActiveAsync(Guid guid, bool active)

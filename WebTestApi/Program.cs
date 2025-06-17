@@ -15,6 +15,7 @@ using Test.AppService.Domain.Fork;
 using Test.AppService.Domain.Security;
 using Test.AppService.Domain.Fault;
 using StackExchange.Redis;
+using Test.AppService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,9 @@ builder.Services.AddScoped<IDataRepository<ForkFault>, ForkFaultRepository>();
 builder.Services.AddScoped<IDataFactory<IForkLift>, ForkLiftDataFactory>();
 builder.Services.AddScoped<IDataProvider<IForkLift>, ForkLiftDataProvider>();
 builder.Services.AddScoped<IDataService<IForkLift>, ForkLiftDataService>();
+
+builder.Services.AddSingleton(new ForkLiftDataMapper().Compile());
+builder.Services.AddSingleton(new ForkFaultDataMapper().Compile());
 
 
 //builder.Services.AddSingleton<IConnectionMultiplexer>(x =>ConnectionMultiplexer.Connect("localhost:6376,abortConnect=false"));

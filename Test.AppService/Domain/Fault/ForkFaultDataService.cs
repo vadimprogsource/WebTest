@@ -10,19 +10,10 @@ public class ForkFaultDataService : EntityDataService<IForkFault, ForkFault> , I
 {
     private readonly IDataRepository<ForkLift> fork_lift_repository;
 
-    public ForkFaultDataService(IUserContext context, IDataRepository<ForkFault> repository, IDataRepository<ForkLift> forkRepository) : base(context, repository)
+    public ForkFaultDataService(IDataRepository<ForkFault> repository, IDataMapper<IForkFault, ForkFault> mapper, IDataRepository<ForkLift> fork_lift_repository) : base(repository, mapper)
     {
-        fork_lift_repository = forkRepository;
+        this.fork_lift_repository = fork_lift_repository;
     }
-
-   
-
-    public override  Task<ForkFault> OnCreateNewAsync(IForkFault source) => Task.FromResult(new ForkFault().Update(source));
- 
-
-    public override Task<ForkFault> OnUpdateAsync(IForkFault source, ForkFault entity) => Task.FromResult(entity.Update(source));
-
-
 
     public async Task<IForkFault> AddFaultAsync(Guid forkGuid, IForkFault fault)
     {

@@ -82,7 +82,7 @@ namespace TestWebApi.Controllers
             return Error();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{guid}")]
         public virtual async Task<IActionResult> DeleteAsync(Guid guid)
         {
             if (await Service.ExecuteDeleteAsync(guid))
