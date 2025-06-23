@@ -12,6 +12,7 @@
     <None Remove="Domain\Fork\" />
     <None Remove="Domain\Security\" />
     <None Remove="Domain\Fault\" />
+    <None Remove="Infrastructure\CodeGen\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastructure\" />
@@ -19,6 +20,7 @@
     <Folder Include="Domain\Fork\" />
     <Folder Include="Domain\Security\" />
     <Folder Include="Domain\Fault\" />
+    <Folder Include="Infrastructure\CodeGen\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Test.Api\Test.Api.csproj" />

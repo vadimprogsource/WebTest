@@ -13,7 +13,7 @@ namespace TestWebApi.Models
         public DateTime? ProblemResolvedAt { get; set; }
         public string? Reason { get; set; }
 
-        public TimeSpan Downtime { get;  }
+        public TimeSpan Downtime { get; set; }
 
         string IForkFault.Reason => Reason ?? string.Empty;
 

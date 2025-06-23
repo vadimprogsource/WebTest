@@ -24,21 +24,27 @@ namespace TestWebApi.Controllers
         protected IDataFactory<TEntity>   Factory=>Resolve<IDataFactory<TEntity>>();
 
 
-        protected abstract TModel ToModel(TEntity entity);
+        protected IActionResult Model(TEntity entity) => Ok(Resolve<IDataMapper<TEntity, TModel>>().New(entity));
+
+        protected IActionResult Models(IEnumerable<TEntity> entities)
+        {
+            IDataMapper<TEntity, TModel> mapper = Resolve<IDataMapper<TEntity, TModel>>();
+            return Ok(entities.Select(x => mapper.New(x)));
+         }
 
 
         [HttpGet("{guid}")]
         public virtual async  Task<IActionResult> GetAsync(Guid guid)
         {
             TEntity entity = await  Provider.GetDataAsync(guid);
-            return Ok(ToModel(entity));
+            return Model(entity);
         }
 
         [HttpGet("new")]
         public virtual async Task<IActionResult> GetNewAsync()
         {
             TEntity entity = await Factory.CreateInstanceAsync();
-            return Ok(ToModel(entity));
+            return Model(entity);
         }
 
 
@@ -51,7 +57,7 @@ namespace TestWebApi.Controllers
             }
 
             TEntity[] entities = await Provider.GetByFilterAsync(filter);
-            return Ok(entities.Select(x => ToModel(x)));
+            return Models(entities);
         }
 
 
@@ -63,7 +69,7 @@ namespace TestWebApi.Controllers
             if (Validator.Validate(model))
             {
                 TEntity entity = await Service.InsertNewAsync(model);
-                return Ok(ToModel(entity));
+                return Model(entity);
             }
 
             return Error();
@@ -76,7 +82,7 @@ namespace TestWebApi.Controllers
             if (Validator.Validate(model))
             {
                 TEntity entity = await Service.ApplyUpdateAsync(model);
-                return Ok(ToModel(entity));
+                return Model(entity);
             }
 
             return Error();

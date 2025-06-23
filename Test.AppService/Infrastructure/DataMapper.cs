@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Test.Api;
 using Test.Api.Infrastructure;
+using Test.AppService.Infrastructure.CodeGen;
 using Test.Entity;
 
 namespace Test.AppService.Infrastructure;
@@ -12,9 +13,10 @@ public class DataMapper<TSource,TDestination>
 {
     private readonly Dictionary<string, PropertyInfo> props;
 
+
     public DataMapper()
     {
-        props = typeof(TSource).GetProperties().Where(x=>x.CanRead).ToDictionary(x => x.Name);
+        props = typeof(TSource).GetAllProperties().Where(x => x.CanRead).ToDictionary(x => x.Name);
     }
 
     public DataMapper<TSource, TDestination> Exclude<TValue>(Expression<Func<TSource, TValue>> property)
@@ -27,40 +29,40 @@ public class DataMapper<TSource,TDestination>
         return this;
     }
 
-    private static void CallMethod(ILGenerator gen, MethodInfo method)
+
+    private readonly struct IncludeInfo
     {
-        if (method.IsVirtual || (method.DeclaringType != null && method.DeclaringType.IsInterface))
+        private readonly PropertyInfo property;
+        private readonly LambdaExpression   expression;
+
+        public IncludeInfo(PropertyInfo property, LambdaExpression expression)
         {
-            gen.Emit(OpCodes.Callvirt, method);
-            return;
+            this.property   = property;
+            this.expression = expression;
         }
 
-        gen.Emit(OpCodes.Call, method);
+
+        public void AppendTo(DataMappingBuilder<TSource, TDestination> builder)
+        {
+            builder.AppendSetProperty(property, expression);
+        }
 
     }
 
-    private static void CallCopyProperty(ILGenerator gen, MethodInfo getter, MethodInfo setter)
+
+    private readonly List<IncludeInfo> includes = new();
+
+    public DataMapper<TSource, TDestination> Include<TValue>(Expression<Func<TDestination, TValue>> property , Expression<Func<TSource,TValue>> expression)
     {
-        gen.Emit(OpCodes.Dup);
-        gen.Emit(OpCodes.Ldarg_0);
-        CallMethod(gen, getter);
-        CallMethod(gen, setter);
-    }
-
-
-    private readonly struct Executor : IDataMapper<TSource, TDestination>
-    {
-        private readonly Func<TSource, TDestination> ctor;
-        private readonly Func<TSource, TDestination,TDestination> map;
-
-        public Executor(DynamicMethod ctor , DynamicMethod map)
+        if (property.Body is MemberExpression member && member.Member is PropertyInfo prop)
         {
-            this.ctor = ctor.CreateDelegate<Func<TSource, TDestination>>();
-            this.map  = map.CreateDelegate<Func<TSource, TDestination, TDestination>>();
+            if (prop.CanWrite)
+            {
+                includes.Add(new IncludeInfo(prop, expression));
+            }
         }
 
-        public TDestination New(TSource source) => ctor(source);
-        public TDestination Map(TSource source, TDestination desctination) => map(source, desctination);
+        return this;
     }
 
 
@@ -68,33 +70,23 @@ public class DataMapper<TSource,TDestination>
     public IDataMapper<TSource, TDestination> Compile()
     {
 
-        DynamicMethod @new = new("new", typeof(TDestination), new[] { typeof(TSource)});
-        ILGenerator new_gen = @new.GetILGenerator();
-        new_gen.Emit(OpCodes.Newobj, typeof(TDestination).GetConstructor(Array.Empty<Type>()) ?? throw new NotSupportedException());
+        DataMappingBuilder<TSource, TDestination> builder = new();
 
 
-        DynamicMethod map = new("map", typeof(TDestination), new[] { typeof(TSource), typeof(TDestination) });
-        ILGenerator map_gen = map.GetILGenerator();
-        map_gen.Emit(OpCodes.Ldarg_1);
-
-        foreach (PropertyInfo dest in typeof(TDestination).GetProperties().Where(x=>x.CanWrite))
+        foreach (PropertyInfo dest in typeof(TDestination).GetAllProperties().Where(x=>x.CanWrite))
         {
-            if(props.TryGetValue(dest.Name , out PropertyInfo? scr) && scr!=null && dest.PropertyType == scr.PropertyType)
+            if(props.TryGetValue(dest.Name , out PropertyInfo? scr) && scr!=null && dest.PropertyType == scr.PropertyType && scr.CanRead && dest.CanWrite)
             {
-
-                MethodInfo? getter = scr.GetGetMethod() , setter = dest.GetSetMethod();
-
-                if (getter == null || setter == null) continue;
-
-                CallCopyProperty(new_gen, getter, setter);
-                CallCopyProperty(map_gen, getter,setter);
+                builder.AppendCopyProperty(scr, dest);
             }
         }
 
-        new_gen.Emit(OpCodes.Ret);
-        map_gen.Emit(OpCodes.Ret);
+        foreach (IncludeInfo include in includes)
+        {
+           include.AppendTo(builder);
+        }
 
-        return new Executor(@new, map);
+        return builder.Build();
 
     }
 

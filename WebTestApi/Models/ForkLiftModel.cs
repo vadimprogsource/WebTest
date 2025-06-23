@@ -15,9 +15,9 @@ public record ForkLiftModel : EntityModel  ,  IForkLift
 
     public bool IsActive { get; set; }
 
-    public DateTime ModifiedAt { get; }
+    public DateTime ModifiedAt { get; set; }
 
-    public string? ModifiedBy { get; }
+    public string? ModifiedBy { get; set; }
 
     string IForkLift.Brand => Brand ?? string.Empty;
 
@@ -58,7 +58,7 @@ public record ForkLiftModel : EntityModel  ,  IForkLift
         Capacity = source.Capacity;
         IsActive = source.IsActive;
 
-        ModifiedAt = source.ModifiedAt;
+        ModifiedAt = source.ModifiedAt.ToLocalTime();
         ModifiedBy = source.ModifiedBy==null?string.Empty: source.ModifiedBy.Name;
     }
 

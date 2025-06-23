@@ -16,7 +16,7 @@ namespace TestWebApi.Controllers
 
 
         [HttpGet("new/{ownerGuid}")]
-        public async Task<IActionResult> GetNewAsync([FromRoute] Guid ownerGuid) => Ok(ToModel(await Resolve<IForkFaultFactory>().CreateInstanceAsync(ownerGuid)));
+        public async Task<IActionResult> GetNewAsync([FromRoute] Guid ownerGuid) => Model(await Resolve<IForkFaultFactory>().CreateInstanceAsync(ownerGuid));
 
 
 
@@ -29,7 +29,7 @@ namespace TestWebApi.Controllers
             }
            
            IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerGuid , filter);
-           return Ok(entities.Select(ToModel));
+           return Models(entities);
            
         }
 
@@ -40,7 +40,7 @@ namespace TestWebApi.Controllers
             if (Validator.Validate(model))
             {
                 IForkFault entity = await Resolve<IForkFaultService>().AddFaultAsync(ownerGuid, model);
-                return Ok(ToModel(entity));
+                return Model(entity);
             }
 
             return Error();
@@ -54,8 +54,6 @@ namespace TestWebApi.Controllers
         public override Task<IActionResult> GetNewAsync() => throw new NotSupportedException();
         
 
-
-        protected override ForkFaultModel ToModel(IForkFault entity) => new(entity);
         
     }
 }

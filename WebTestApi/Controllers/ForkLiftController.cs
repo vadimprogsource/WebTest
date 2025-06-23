@@ -16,12 +16,8 @@ namespace TestWebApi.Controllers
         public async Task<IActionResult> SetActive([FromRoute] Guid guid, [FromRoute] string flag)
         {
             IForkLift fork = await Resolve<IForkLiftService>().SetActiveAsync(guid, string.Compare(flag, "on", true) == 0 || string.Compare(flag, "true", true) == 0);
-            return Ok(ToModel(fork));
+            return Model(fork);
         }
-
-
-
-        protected override ForkLiftModel ToModel(IForkLift entity) => new(entity);
         
     }
 }
