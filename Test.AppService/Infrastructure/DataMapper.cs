@@ -32,20 +32,22 @@ public class DataMapper<TSource,TDestination>
 
     private readonly struct IncludeInfo
     {
-        private readonly PropertyInfo property;
-        private readonly LambdaExpression   expression;
+        public readonly PropertyInfo      Property;
+        public readonly LambdaExpression  Expression;
 
-        public IncludeInfo(PropertyInfo property, LambdaExpression expression)
+        public IncludeInfo(LambdaExpression property, LambdaExpression expression)
         {
-            this.property   = property;
-            this.expression = expression;
+
+            if (property.Body is MemberExpression m && m.Member is PropertyInfo p && p.CanWrite)
+            {
+                Property = p;
+                Expression = expression;
+                return;
+            }
+
+            throw new NotSupportedException();
         }
 
-
-        public void AppendTo(DataMappingBuilder<TSource, TDestination> builder)
-        {
-            builder.AppendSetProperty(property, expression);
-        }
 
     }
 
@@ -54,14 +56,7 @@ public class DataMapper<TSource,TDestination>
 
     public DataMapper<TSource, TDestination> Include<TValue>(Expression<Func<TDestination, TValue>> property , Expression<Func<TSource,TValue>> expression)
     {
-        if (property.Body is MemberExpression member && member.Member is PropertyInfo prop)
-        {
-            if (prop.CanWrite)
-            {
-                includes.Add(new IncludeInfo(prop, expression));
-            }
-        }
-
+        includes.Add(new IncludeInfo(property, expression));
         return this;
     }
 
@@ -72,18 +67,17 @@ public class DataMapper<TSource,TDestination>
 
         DataMappingBuilder<TSource, TDestination> builder = new();
 
-
-        foreach (PropertyInfo dest in typeof(TDestination).GetAllProperties().Where(x=>x.CanWrite))
+        foreach (PropertyInfo targetProp in typeof(TDestination).GetAllProperties().Where(x=>x.CanWrite))
         {
-            if(props.TryGetValue(dest.Name , out PropertyInfo? scr) && scr!=null && dest.PropertyType == scr.PropertyType && scr.CanRead && dest.CanWrite)
+            if(props.TryGetValue(targetProp.Name , out PropertyInfo? sourceProp) && sourceProp != null && targetProp.PropertyType == sourceProp.PropertyType && sourceProp.CanRead && targetProp.CanWrite)
             {
-                builder.AppendCopyProperty(scr, dest);
+                builder.AppendCopyProperty(sourceProp, targetProp);
             }
         }
 
-        foreach (IncludeInfo include in includes)
+        foreach (IncludeInfo i in includes)
         {
-           include.AppendTo(builder);
+            builder.AppendSetProperty(i.Property, i.Expression);
         }
 
         return builder.Build();

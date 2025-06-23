@@ -20,17 +20,12 @@ public class DataMappingBuilder<TSource, TDestination>
         type = DataAssemblyBuilder.DefineType($"DataMapper<{typeof(TSource).Name},{typeof(TDestination).Name}>");
         type.AddInterfaceImplementation(typeof(IDataMapper<TSource, TDestination>));
 
-        ConstructorBuilder ctor = type.DefineConstructor(MethodAttributes.Public , CallingConventions.Standard, Array.Empty<Type>());
-        ILGenerator gen = ctor.GetILGenerator();
-        gen.Emit(OpCodes.Ret);
-
-
         MethodBuilder map = type.DefineMethod("Map", MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.Public,CallingConventions.HasThis, typeof(TDestination), new[] {typeof(TSource) , typeof(TDestination) });
         generator = map.GetILGenerator();
 
 
         MethodBuilder @new = type.DefineMethod("New", MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.Public,CallingConventions.HasThis, typeof(TDestination), new[] { typeof(TSource) });
-        gen = @new.GetILGenerator();
+        ILGenerator gen = @new.GetILGenerator();
         gen.Emit(OpCodes.Ldarg_0);
         gen.Emit(OpCodes.Ldarg_1);
         gen.Emit(OpCodes.Newobj, typeof(TDestination).GetConstructor(Array.Empty<Type>()) ?? throw new NotSupportedException());
