@@ -25,14 +25,7 @@ namespace TestWebApi.Models
 
         public ForkFaultModel() { }
 
-        public ForkFaultModel(IForkFault source)
-        {
-            Guid = source.Guid;
-            ProblemDetectedAt = source.ProblemDetectedAt.ToLocalTime();
-            ProblemResolvedAt = source.ProblemResolvedAt.HasValue?source.ProblemResolvedAt.Value.ToLocalTime(): null;
-            Reason = source.Reason;
-            Downtime = source.Downtime;
-        }
+
 
     }
 }

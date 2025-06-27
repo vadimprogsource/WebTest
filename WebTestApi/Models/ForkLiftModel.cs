@@ -50,17 +50,7 @@ public record ForkLiftModel : EntityModel  ,  IForkLift
     public ForkLiftModel()
     { }
 
-    public ForkLiftModel(IForkLift source)
-    {
-        Guid = source.Guid;
-        Brand = source.Brand;
-        Number = source.Number;
-        Capacity = source.Capacity;
-        IsActive = source.IsActive;
 
-        ModifiedAt = source.ModifiedAt.ToLocalTime();
-        ModifiedBy = source.ModifiedBy==null?string.Empty: source.ModifiedBy.Name;
-    }
 
 }
 
