@@ -6,20 +6,13 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fork
 {
-    public class ForkLiftDataFactory : DataFactory<IForkLift,ForkLift>
+    public class ForkLiftDataFactory(IUserContext context) : DataFactory<IForkLift, ForkLift>
     {
-        private readonly IUserContext userContext;
-
-        public ForkLiftDataFactory(IUserContext context)
-        {
-            userContext = context;
-        }
-
         protected async override Task<ForkLift> CreateInstanceAsync()
         {
             ForkLift fork = new()
             {
-                ModifiedBy = (User)await userContext.GetUserAsync(),
+                ModifiedBy = (User)await context.GetUserAsync(),
                 ModifiedAt = DateTime.UtcNow
             };
 

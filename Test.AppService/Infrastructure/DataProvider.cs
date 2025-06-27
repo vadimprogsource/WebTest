@@ -5,16 +5,11 @@ using Test.Entity;
 
 namespace Test.AppService.Infrastructure;
 
-public  class DataProvider<TInterface, TEntity> : IDataProvider<TInterface> where TInterface : IIdentity where TEntity : class, TInterface
+public class DataProvider<TInterface, TEntity>(IDataRepository<TEntity> repository) : IDataProvider<TInterface>
+    where TInterface : IIdentity
+    where TEntity : class, TInterface
 {
-    protected readonly IDataRepository<TEntity> Repository;
-
-
-    public DataProvider(IDataRepository<TEntity> repository)
-    {
-        Repository = repository;
-
-    }
+    protected readonly IDataRepository<TEntity> Repository = repository;
 
 
     public async Task<TInterface[]> GetByFilterAsync(IFilterData filter)
@@ -35,12 +30,11 @@ public  class DataProvider<TInterface, TEntity> : IDataProvider<TInterface> wher
     
 }
 
-public class EntityDataProvider<TInterface, TEntity> : DataProvider<TInterface, TEntity> where TInterface : IEntity where TEntity : EntityBase, TInterface
+public class EntityDataProvider<TInterface, TEntity>(IDataRepository<TEntity> repository)
+    : DataProvider<TInterface, TEntity>(repository)
+    where TInterface : IEntity
+    where TEntity : EntityBase, TInterface
 {
-    public EntityDataProvider(IDataRepository<TEntity> repository) : base(repository)
-    {
-    }
-
     protected override IQueryable<TEntity> ApplyFilter(IQueryable<TEntity> query, IFilterData filter)
     {
         return base.ApplyFilter(query.OrderBy(x=>x.CreatedAt), filter);

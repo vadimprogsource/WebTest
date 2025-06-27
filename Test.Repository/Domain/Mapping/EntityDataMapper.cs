@@ -6,12 +6,9 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public abstract class EntityDataMapper<TEntity> : DataMapper<TEntity> where TEntity : EntityBase
+    public abstract class EntityDataMapper<TEntity>(ModelBuilder modelBuilder) : DataMapper<TEntity>(modelBuilder)
+        where TEntity : EntityBase
     {
-        public EntityDataMapper(ModelBuilder modelBuilder) : base(modelBuilder)
-        {
-        }
-
         protected override void Map(EntityTypeBuilder<TEntity> entity)
         {
             entity.HasKey(x => x.Guid);

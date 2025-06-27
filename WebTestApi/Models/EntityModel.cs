@@ -11,7 +11,7 @@ namespace TestWebApi.Models
 
         bool IIdentity.IsValid => true;
 
-        public EntityModel()
+        protected EntityModel()
         {
         }
     }

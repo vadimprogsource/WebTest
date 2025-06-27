@@ -5,11 +5,6 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain
 {
-    public class ForkFaultRepository : DataRepository<ForkFault>
-    {
-        public ForkFaultRepository(ForkDbContext context) : base(context)
-        {
-        }
-    }
+    public class ForkFaultRepository(ForkDbContext context) : DataRepository<ForkFault>(context);
 }
 

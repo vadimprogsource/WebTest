@@ -7,12 +7,9 @@ using Test.Api.Infrastructure;
 
 namespace Test.AppService.Domain.Fault;
 
-public class ForkFaultDataProvider : EntityDataProvider<IForkFault, ForkFault> , IForkFaultProvider
+public class ForkFaultDataProvider(IDataRepository<ForkFault> repository)
+    : EntityDataProvider<IForkFault, ForkFault>(repository), IForkFaultProvider
 {
-    public ForkFaultDataProvider(IDataRepository<ForkFault> repository) : base(repository)
-    {
-    }
-   
     public async Task<IForkFault[]> GetFaultsAsync(Guid forkGuid, IFilterData filter)
     {
         return await Repository.SelectAsync(query => ApplyFilter( query.Where(x => x.ForkLiftGuid == forkGuid),filter));

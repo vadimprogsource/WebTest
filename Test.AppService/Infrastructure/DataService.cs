@@ -6,22 +6,20 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Test.AppService.Infrastructure;
 
-public abstract class DataService<TInterface, TEntity> : IDataService<TInterface> where TInterface : IIdentity where TEntity : class, TInterface
+public abstract class DataService<TInterface, TEntity>(
+    IDataRepository<TEntity> repository,
+    IDataMapper<TInterface, TEntity> mapper)
+    : IDataService<TInterface>
+    where TInterface : IIdentity
+    where TEntity : class, TInterface
 {
-    protected readonly IDataRepository<TEntity> Repository;
-    protected readonly IDataMapper<TInterface, TEntity> Mapper;
-
-    public DataService(IDataRepository<TEntity> repository, IDataMapper<TInterface, TEntity> mapper)
-    {
-        Repository = repository;
-        Mapper = mapper;
-    }
-
+    protected readonly IDataRepository<TEntity> Repository = repository;
+    private readonly IDataMapper<TInterface, TEntity> _mapper = mapper;
 
 
     public async Task<TInterface> InsertNewAsync(TInterface entity)
     {
-        TEntity data =  Mapper.New(entity);
+        TEntity data =  _mapper.New(entity);
         return await InsertNewAsync(data);
 
     }
@@ -36,7 +34,7 @@ public abstract class DataService<TInterface, TEntity> : IDataService<TInterface
     public async  Task<TInterface> ApplyUpdateAsync(TInterface entity)
     {
         TEntity data = await Repository.SelectAsync(entity.Guid);
-        Mapper.Map(entity,data);
+        _mapper.Map(entity,data);
         return await ApplyUpdateAsync(data);
     }
     protected virtual async Task<TEntity> ApplyUpdateAsync(TEntity entity)
@@ -49,12 +47,13 @@ public abstract class DataService<TInterface, TEntity> : IDataService<TInterface
     public virtual Task<bool> ExecuteDeleteAsync(Guid guid) => Repository.DeleteAsync(guid);
 }
 
-public abstract class EntityDataService<TInterface, TEntity> : DataService<TInterface, TEntity> where TInterface : IEntity where TEntity : EntityBase, TInterface
+public abstract class EntityDataService<TInterface, TEntity>(
+    IDataRepository<TEntity> repository,
+    IDataMapper<TInterface, TEntity> mapper)
+    : DataService<TInterface, TEntity>(repository, mapper)
+    where TInterface : IEntity
+    where TEntity : EntityBase, TInterface
 {
-    protected EntityDataService(IDataRepository<TEntity> repository, IDataMapper<TInterface, TEntity> mapper) : base(repository, mapper)
-    {
-    }
-
     protected override Task<TEntity> InsertNewAsync(TEntity entity)
     {
         entity.Guid = Guid.NewGuid();

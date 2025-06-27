@@ -8,30 +8,26 @@ namespace TestWebApi.Controllers;
 
 [Route("db")]
 //[ApiExplorerSettings(IgnoreApi = true)]
-public class DataBaseController : ControllerBase
+public class DataBaseController(ForkDbContext context) : ControllerBase
 {
-    private readonly ForkDbContext dbContext;
-
-    public DataBaseController(ForkDbContext context) =>dbContext = context;
-
     [HttpGet]
     public IActionResult GetScript()
     {
-        return Ok(dbContext.Database.GenerateCreateScript());
+        return Ok(context.Database.GenerateCreateScript());
         //return NotFound();
     }
 
     [HttpPut]
     public  IActionResult CreateDataBase()
     {
-        dbContext.Database.EnsureCreated();
+        context.Database.EnsureCreated();
         return NoContent();
     }
 
     [HttpDelete]
     public IActionResult DeleteDataBase()
     {
-        dbContext.Database.EnsureDeleted();
+        context.Database.EnsureDeleted();
         return NoContent();
     }
 

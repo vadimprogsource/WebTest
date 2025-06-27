@@ -5,15 +5,8 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Security
 {
-    public class DataSessionStorage : ISessionStorage
+    public class DataSessionStorage(IDataRepository<UserSession> repository) : ISessionStorage
     {
-        private readonly IDataRepository<UserSession> repository;
-
-        public DataSessionStorage(IDataRepository<UserSession> repository)
-        {
-            this.repository = repository;
-        }
-
         public async Task<IUserSession> CreateSessionAsync(IUser user, DateTime createdAt, TimeSpan expired)
         {
             UserSession session = new ()

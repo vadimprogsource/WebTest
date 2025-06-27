@@ -16,11 +16,11 @@ namespace TestWebApi.Controllers
         protected TService Resolve<TService>() => HttpContext.RequestServices.GetService(typeof(TService)) is TService service ?service : throw new NotSupportedException();
 
 
-        private  IDataValidator<TEntity>? validator = null;
+        private  IDataValidator<TEntity>? _validator = null;
 
         protected IDataProvider<TEntity>  Provider => Resolve<IDataProvider<TEntity>>();
         protected IDataService<TEntity>   Service => Resolve<IDataService<TEntity>>();
-        protected IDataValidator<TEntity> Validator => validator ??= Resolve<IDataValidator<TEntity>>();
+        protected IDataValidator<TEntity> Validator => _validator ??= Resolve<IDataValidator<TEntity>>();
         protected IDataFactory<TEntity>   Factory=>Resolve<IDataFactory<TEntity>>();
 
 
@@ -61,7 +61,7 @@ namespace TestWebApi.Controllers
         }
 
 
-        protected IActionResult Error()=> validator!=null? BadRequest(ErrorModel.Create(validator.Errors)):BadRequest();
+        protected IActionResult Error()=> _validator!=null? BadRequest(ErrorModel.Create(_validator.Errors)):BadRequest();
 
         [HttpPut]
         public virtual async Task<IActionResult> PutAsync([FromBody]TModel model)

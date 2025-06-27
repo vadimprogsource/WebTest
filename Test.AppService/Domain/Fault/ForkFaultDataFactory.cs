@@ -9,12 +9,12 @@ public class ForkFaultDataFactory : DataFactory<IForkFault, ForkFault>, IForkFau
 {
     public Task<IForkFault> CreateInstanceAsync(Guid forkGuid)
     {
-        ForkFault fault = new()
+        IForkFault fault = new ForkFault()
         {
             ForkLiftGuid = forkGuid
         };
 
-        return Task.FromResult((IForkFault)fault);
+        return Task.FromResult(fault)!;
     }
 }
 

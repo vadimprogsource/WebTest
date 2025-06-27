@@ -10,8 +10,7 @@ namespace TestWebApi.Services;
 
 public class AuthUser: ClaimsPrincipal
 {
-
-    const string AUTH = "Authorization";
+    private const string Auth = "Authorization";
 
     private readonly struct EmptySession : IUserSession
     {
@@ -31,7 +30,7 @@ public class AuthUser: ClaimsPrincipal
     private readonly ClaimsPrincipal principal;
     private readonly IUserSession session;
 
-    protected AuthUser(ClaimsPrincipal principal,IUserSession session)
+    private AuthUser(ClaimsPrincipal principal,IUserSession session)
     {
         this.principal = principal;
         this.session = session;
@@ -40,7 +39,7 @@ public class AuthUser: ClaimsPrincipal
     public override IIdentity? Identity => principal.Identity;
     public override IEnumerable<ClaimsIdentity> Identities => principal.Identities;
 
-    public static string GenerateToken(IUserSession session)
+    private static string GenerateToken(IUserSession session)
     {
 
         JwtSecurityToken token = new
@@ -55,15 +54,15 @@ public class AuthUser: ClaimsPrincipal
     public static string SetAuthorize(HttpContext context ,  IUserSession session)
     {
         string token = GenerateToken(session);
-        context.Response.Headers[AUTH] = $"Bearer {token}";
-        context.Response.Cookies.Append(AUTH, token);
+        context.Response.Headers[Auth] = $"Bearer {token}";
+        context.Response.Cookies.Append(Auth, token);
         return token;
     }
 
     public static void SignOut(HttpContext context)
     {
-        context.Response.Headers[AUTH] = string.Empty;
-        context.Response.Cookies.Delete(AUTH);
+        context.Response.Headers[Auth] = string.Empty;
+        context.Response.Cookies.Delete(Auth);
 
         if(context.User is AuthUser u)
         {
@@ -84,7 +83,7 @@ public class AuthUser: ClaimsPrincipal
 
         ClaimsPrincipal user = context.User;
 
-        if (user == null || user.Identity == null)
+        if (user.Identity == null)
         {
             return Empty;
         }
@@ -99,14 +98,12 @@ public class AuthUser: ClaimsPrincipal
 
             Claim? jti = user.FindFirst(JwtRegisteredClaimNames.Jti);
 
-            if (jti != null && jti.Value != null && Guid.TryParse(jti.Value, out Guid guid))
-            {
-                IAuthProvider provider = context.RequestServices.GetRequiredService<IAuthProvider>();
-                IUserSession session = await provider.GetSessionAsync(guid);
+            if (jti == null || !Guid.TryParse(jti.Value, out Guid guid)) return Empty;
+            IAuthProvider provider = context.RequestServices.GetRequiredService<IAuthProvider>();
+            IUserSession session = await provider.GetSessionAsync(guid);
 
-                context.User = new AuthUser(user, session);
-                return session;
-            }
+            context.User = new AuthUser(user, session);
+            return session;
 
         }
 

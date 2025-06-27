@@ -16,7 +16,7 @@ public  record ErrorModel
         Reason = error.Reason;
     }
 
-    public ErrorModel(IEnumerable<IError> errors) 
+    private ErrorModel(IEnumerable<IError> errors) 
     {
         IError first = errors.First();
 

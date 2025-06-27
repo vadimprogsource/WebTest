@@ -28,8 +28,8 @@ namespace TestWebApi.Controllers
                 filter.MaxCount = 50;
             }
            
-           IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerGuid , filter);
-           return Models(entities);
+            IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerGuid , filter);
+            return Models(entities);
            
         }
 

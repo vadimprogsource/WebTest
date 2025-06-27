@@ -6,15 +6,11 @@ using Test.Api.Infrastructure;
 
 namespace Test.Repository.Infrastructure
 {
-    public class DataRepository<TEntity> : IDataRepository<TEntity> where TEntity : class ,  IIdentity
+    public class DataRepository<TEntity>(DbContext context) : IDataRepository<TEntity>
+        where TEntity : class, IIdentity
     {
 
-        protected readonly DbContext Context;
-
-        public DataRepository(DbContext context)
-        {
-            Context = context;
-        }
+        protected readonly DbContext Context = context;
 
 
         protected IQueryable<TEntity> GetQueryable() => Context.Set<TEntity>().AsQueryable();

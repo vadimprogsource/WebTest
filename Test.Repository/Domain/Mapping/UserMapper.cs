@@ -6,12 +6,8 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public class UserMapper : EntityDataMapper<User>
+    public class UserMapper(ModelBuilder modelBuilder) : EntityDataMapper<User>(modelBuilder)
     {
-        public UserMapper(ModelBuilder modelBuilder) : base(modelBuilder)
-        {
-        }
-
         protected override void Map(EntityTypeBuilder<User> entity)
         {
             base.Map(entity);

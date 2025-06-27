@@ -6,12 +6,8 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public class ForkLiftMapper : EntityDataMapper<ForkLift>
+    public class ForkLiftMapper(ModelBuilder modelBuilder) : EntityDataMapper<ForkLift>(modelBuilder)
     {
-        public ForkLiftMapper(ModelBuilder modelBuilder) : base(modelBuilder)
-        {
-        }
-
         protected override void Map(EntityTypeBuilder<ForkLift> entity)
         {
             base.Map(entity);

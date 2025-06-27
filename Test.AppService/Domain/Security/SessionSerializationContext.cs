@@ -4,18 +4,16 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Security
 {
-    public class SessionSerializationContext
+    public static class SessionSerializationContext
     {
-        private const int GUID_SIZE = 2 * sizeof(long);
-        private const int SIZE = 2 * sizeof(long) + GUID_SIZE ; 
+        private const int GuidSize = 2 * sizeof(long);
+        private const int Size = 2 * sizeof(long) + GuidSize ; 
 
-        public SessionSerializationContext()
-        {
-        }
+    
 
         public static string Serialize(UserSession session)
         {
-            byte[] buff = ArrayPool<byte>.Shared.Rent(SIZE);
+            byte[] buff = ArrayPool<byte>.Shared.Rent(Size);
 
             try
             {
@@ -34,18 +32,18 @@ namespace Test.AppService.Domain.Security
 
         public static UserSession Deserialize(string state)
         {
-            byte[] buff = ArrayPool<byte>.Shared.Rent(SIZE);
+            byte[] buff = ArrayPool<byte>.Shared.Rent(Size);
             UserSession session = new();
 
             try
             {
-                if (Convert.TryFromBase64String(state, buff, out int bytes) && bytes == SIZE)
+                if (Convert.TryFromBase64String(state, buff, out int bytes) && bytes == Size)
                 {
                     using BinaryReader reader = new (new MemoryStream(buff));
                     reader.BaseStream.Seek(0, SeekOrigin.Begin);
                     session.CreatedAt = DateTime.FromBinary(reader.ReadInt64());
                     session.ExpiredAt = DateTime.FromBinary(reader.ReadInt64());
-                    session.Guid = new Guid( reader.ReadBytes(GUID_SIZE));
+                    session.Guid = new Guid( reader.ReadBytes(GuidSize));
                 }
             }
             catch

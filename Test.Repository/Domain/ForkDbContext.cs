@@ -7,14 +7,8 @@ using Test.Repository.Domain.Mapping;
 
 namespace Test.Repository.Domain;
 
-public class ForkDbContext : DbContext
+public class ForkDbContext(DbContextOptions<ForkDbContext> options) : DbContext(options)
 {
-
-    public ForkDbContext(DbContextOptions<ForkDbContext> options) : base(options)
-    {
-     
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         new UserMapper(modelBuilder);

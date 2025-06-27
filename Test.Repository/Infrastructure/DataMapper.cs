@@ -6,8 +6,7 @@ namespace Test.Repository.Infrastructure
 {
     public abstract class DataMapper<TEntity> where TEntity : class
     {
-       
-        public DataMapper(ModelBuilder modelBuilder)
+        protected DataMapper(ModelBuilder modelBuilder)
         {
             Map(modelBuilder.Entity<TEntity>());
         }

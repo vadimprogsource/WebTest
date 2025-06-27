@@ -7,18 +7,13 @@ using Test.Api.Infrastructure;
 
 namespace TestWebApi.Services
 {
-    public class UserContext : IUserContext
+    public class UserContext(IHttpContextAccessor http) : IUserContext
     {
-        private readonly HttpContext context;
-    
-        public UserContext(IHttpContextAccessor http)
-        {
-            context = http.HttpContext??throw new AccessViolationException();
-        }
+        private readonly HttpContext _context = http.HttpContext??throw new AccessViolationException();
 
-        public bool IsAuthenticated => context.User.Identity!=null && context.User.Identity.IsAuthenticated;
+        public bool IsAuthenticated => _context.User.Identity!=null && _context.User.Identity.IsAuthenticated;
 
-        public async Task<IUserSession> GetSessionAsync() => await AuthUser.GetSessionAsync(context);
+        public async Task<IUserSession> GetSessionAsync() => await AuthUser.GetSessionAsync(_context);
 
         public async Task<IUser> GetUserAsync()
         {
@@ -29,7 +24,7 @@ namespace TestWebApi.Services
                 throw new AccessViolationException();
             }
 
-            return await context.RequestServices.GetRequiredService<IAuthProvider>().GetSessionUserAsync(session);
+            return await _context.RequestServices.GetRequiredService<IAuthProvider>().GetSessionUserAsync(session);
         }
         
     }

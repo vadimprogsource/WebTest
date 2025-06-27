@@ -1,31 +1,19 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 using Test.Api.Infrastructure;
 using Test.Entity.Domain;
-using static System.Collections.Specialized.BitVector32;
 
-namespace Test.AppService.Domain
+namespace Test.AppService.Domain.Security
 {
-    public class AuthProvider : IAuthProvider
+    public class AuthProvider(IDataRepository<User> userRepository, ISessionStorage storage) : IAuthProvider
     {
-        private readonly IDataRepository<User>        user_repository;
-        private readonly ISessionStorage              session_storage;
-
-
-        public AuthProvider(IDataRepository<User>  user , ISessionStorage storage)
-        {
-            user_repository = user;
-            session_storage = storage;
-        }
-
-        private static DateTime next_call_time; 
+        private static DateTime _nextCallTime; 
 
         protected async Task TryTerminateExpired()
         {
-            if (DateTime.UtcNow>=next_call_time)
+            if (DateTime.UtcNow>=_nextCallTime)
             {
-               await session_storage.DeleteExpiredSessions(DateTime.UtcNow);
-                next_call_time = DateTime.UtcNow.Add(UserSession.DefaultExpiredTimeOut);
+               await storage.DeleteExpiredSessions(DateTime.UtcNow);
+                _nextCallTime = DateTime.UtcNow.Add(UserSession.DefaultExpiredTimeOut);
             }
         }
 
@@ -35,14 +23,14 @@ namespace Test.AppService.Domain
             await TryTerminateExpired();
 
            Guid  passwordGuid = new User { Login = login }.SetPassword(password).Password;
-           User? user         = await user_repository.SelectAsync(x => x.Password == passwordGuid && x.Login == login);
+           User? user         = await userRepository.SelectAsync(x => x.Password == passwordGuid && x.Login == login);
 
             if (user == null)
             {
                 return UserSession.Empty;
             }
 
-            return await session_storage.CreateSessionAsync(user , DateTime.UtcNow , UserSession.DefaultExpiredTimeOut);
+            return await storage.CreateSessionAsync(user , DateTime.UtcNow , UserSession.DefaultExpiredTimeOut);
         }
 
         public async Task<IUserSession> GetSessionAsync(Guid sid)
@@ -54,7 +42,7 @@ namespace Test.AppService.Domain
                 return UserSession.Empty;
             }
 
-            IUserSession session =  await session_storage.GetSessionAsync(sid);
+            IUserSession session =  await storage.GetSessionAsync(sid);
 
             if (session.HasExpired)
             {
@@ -66,7 +54,7 @@ namespace Test.AppService.Domain
 
         public async Task<IUser> GetSessionUserAsync(Guid sid)
         {
-            IUserSession session = await session_storage.GetSessionAsync(sid);
+            IUserSession session = await storage.GetSessionAsync(sid);
             return await GetSessionUserAsync(session);
         }
 
@@ -77,7 +65,7 @@ namespace Test.AppService.Domain
                 throw new AccessViolationException();
             }
 
-            IUser user = await user_repository.SelectAsync(session.UserGuid);
+            IUser user = await userRepository.SelectAsync(session.UserGuid);
             return user;
         }
 
@@ -85,13 +73,13 @@ namespace Test.AppService.Domain
         public async Task SignOutAsync(IUserSession session)
         {
             await TryTerminateExpired();
-            await session_storage.DeleteSession(session.Guid);
+            await storage.DeleteSession(session.Guid);
         }
 
         public async Task SignOutAsync(IUser user)
         {
             await TryTerminateExpired();
-            await session_storage.DeleteUserSessions(user);
+            await storage.DeleteUserSessions(user);
         }
 
      

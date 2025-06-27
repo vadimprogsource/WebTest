@@ -6,12 +6,8 @@ using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain.Mapping
 {
-    public class UserSessionMapper : DataMapper<UserSession>
+    public class UserSessionMapper(ModelBuilder modelBuilder) : DataMapper<UserSession>(modelBuilder)
     {
-        public UserSessionMapper(ModelBuilder modelBuilder) : base(modelBuilder)
-        {
-        }
-
         protected override void Map(EntityTypeBuilder<UserSession> entity)
         {
             entity.HasKey(x => x.Guid);

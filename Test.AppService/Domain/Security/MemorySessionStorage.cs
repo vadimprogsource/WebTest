@@ -9,24 +9,17 @@ namespace Test.AppService.Domain.Security;
 public class MemorySessionStorage : ISessionStorage
 {
 
-    private readonly struct SessionData
+    private readonly struct SessionData(UserSession session)
     {
     
-        public readonly DateTime CreatedAt;
-        public readonly DateTime ExpiredAt;
-        public readonly Guid      UserGuid;
-
-        public SessionData(UserSession session)
-        {
-            CreatedAt = session.CreatedAt;
-            ExpiredAt = session.ExpiredAt;
-            UserGuid = session.Guid;
-        }
+        public readonly DateTime CreatedAt = session.CreatedAt;
+        public readonly DateTime ExpiredAt = session.ExpiredAt;
+        public readonly Guid      UserGuid = session.Guid;
     }
 
 
-    private readonly Dictionary<Guid, SessionData> sts = new();
-    private readonly Queue<Tuple<DateTime, Guid>> sts_queue = new(); 
+    private readonly Dictionary<Guid, SessionData> _sts = new();
+    private readonly Queue<Tuple<DateTime, Guid>> _stsQueue = new(); 
 
 
 
@@ -45,32 +38,32 @@ public class MemorySessionStorage : ISessionStorage
 
         };
 
-        sts.Add(session.Guid, new SessionData(session));
-        sts_queue.Enqueue(Tuple.Create(session.Expired, session.Guid));
+        _sts.Add(session.Guid, new SessionData(session));
+        _stsQueue.Enqueue(Tuple.Create(session.Expired, session.Guid));
         return Task.FromResult((IUserSession) session);
     }
 
-    private async Task DeleteSessions(Func<SessionData, bool> contition)
+    private async Task DeleteSessions(Func<SessionData, bool> condition)
     {
-        foreach (Guid guid in sts.Where(x => contition(x.Value)).Select(x => x.Key).ToArray())
+        foreach (Guid guid in _sts.Where(x => condition(x.Value)).Select(x => x.Key).ToArray())
         {
             await Task.Delay(1);
-            sts.Remove(guid);
+            _sts.Remove(guid);
         }
     }
 
     public async Task DeleteExpiredSessions(DateTime expired)
     {
-        while (sts_queue.Peek().Item1 >= expired)
+        while (_stsQueue.Peek().Item1 >= expired)
         {
-            sts.Remove(sts_queue.Dequeue().Item2);
+            _sts.Remove(_stsQueue.Dequeue().Item2);
             await Task.Delay(1);
         }
      }
 
     public Task DeleteSession(Guid guid)
     {
-        sts.Remove(guid);
+        _sts.Remove(guid);
         return Task.CompletedTask;
 
     }
@@ -80,7 +73,7 @@ public class MemorySessionStorage : ISessionStorage
 
     public async Task<IUserSession> GetSessionAsync(Guid guid)
     {
-        if (sts.TryGetValue(guid, out SessionData session))
+        if (_sts.TryGetValue(guid, out SessionData session))
         {
             return new UserSession
             {
