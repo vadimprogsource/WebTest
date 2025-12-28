@@ -1,27 +1,24 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Mvc;
 using Test.Api;
 using Test.Api.Infrastructure;
-using Test.AppService.Infrastructure;
 using TestWebApi.Models;
 
 namespace TestWebApi.Controllers
 {
     [ApiController]
-    public abstract class ApiController<TEntity,TModel> : ControllerBase where TEntity : IIdentity where TModel : TEntity
+    public abstract class ApiController<TEntity, TModel> : ControllerBase where TEntity : IIdentity where TModel : TEntity
     {
 
 
-        protected TService Resolve<TService>() => HttpContext.RequestServices.GetService(typeof(TService)) is TService service ?service : throw new NotSupportedException();
+        protected TService Resolve<TService>() => HttpContext.RequestServices.GetService(typeof(TService)) is TService service ? service : throw new NotSupportedException();
 
 
-        private  IDataValidator<TEntity>? _validator = null;
+        private IDataValidator<TEntity>? _validator = null;
 
-        protected IDataProvider<TEntity>  Provider => Resolve<IDataProvider<TEntity>>();
-        protected IDataService<TEntity>   Service => Resolve<IDataService<TEntity>>();
+        protected IDataProvider<TEntity> Provider => Resolve<IDataProvider<TEntity>>();
+        protected IDataService<TEntity> Service => Resolve<IDataService<TEntity>>();
         protected IDataValidator<TEntity> Validator => _validator ??= Resolve<IDataValidator<TEntity>>();
-        protected IDataFactory<TEntity>   Factory=>Resolve<IDataFactory<TEntity>>();
+        protected IDataFactory<TEntity> Factory => Resolve<IDataFactory<TEntity>>();
 
 
         protected IActionResult Model(TEntity entity) => Ok(Resolve<IDataMapper<TEntity, TModel>>().New(entity));
@@ -30,13 +27,13 @@ namespace TestWebApi.Controllers
         {
             IDataMapper<TEntity, TModel> mapper = Resolve<IDataMapper<TEntity, TModel>>();
             return Ok(entities.Select(x => mapper.New(x)));
-         }
+        }
 
 
         [HttpGet("{guid}")]
-        public virtual async  Task<IActionResult> GetAsync(Guid guid)
+        public virtual async Task<IActionResult> GetAsync(Guid guid)
         {
-            TEntity entity = await  Provider.GetDataAsync(guid);
+            TEntity entity = await Provider.GetDataAsync(guid);
             return Model(entity);
         }
 
@@ -61,10 +58,10 @@ namespace TestWebApi.Controllers
         }
 
 
-        protected IActionResult Error()=> _validator!=null? BadRequest(ErrorModel.Create(_validator.Errors)):BadRequest();
+        protected IActionResult Error() => _validator != null ? BadRequest(ErrorModel.Create(_validator.Errors)) : BadRequest();
 
         [HttpPut]
-        public virtual async Task<IActionResult> PutAsync([FromBody]TModel model)
+        public virtual async Task<IActionResult> PutAsync([FromBody] TModel model)
         {
             if (Validator.Validate(model))
             {
@@ -77,7 +74,7 @@ namespace TestWebApi.Controllers
         }
 
         [HttpPatch]
-        public virtual  async Task<IActionResult> PatchAsync([FromBody]TModel model)
+        public virtual async Task<IActionResult> PatchAsync([FromBody] TModel model)
         {
             if (Validator.Validate(model))
             {

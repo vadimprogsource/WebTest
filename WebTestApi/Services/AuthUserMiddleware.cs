@@ -6,8 +6,8 @@ public class AuthUserMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public AuthUserMiddleware(RequestDelegate next)=>_next = next;
-    
+    public AuthUserMiddleware(RequestDelegate next) => _next = next;
+
 
     public async Task InvokeAsync(HttpContext context)
     {

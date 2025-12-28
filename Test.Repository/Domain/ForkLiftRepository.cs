@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Test.Entity.Domain;
 using Test.Repository.Infrastructure;
 
@@ -12,7 +11,7 @@ namespace Test.Repository.Domain
         public override async Task<bool> DeleteAsync(Guid guid)
         {
 
-            if(await Context.Set<ForkFault>().AnyAsync(x => x.ForkLiftGuid == guid))
+            if (await Context.Set<ForkFault>().AnyAsync(x => x.ForkLiftGuid == guid))
             {
                 return false;
             }

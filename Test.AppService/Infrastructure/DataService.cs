@@ -1,8 +1,6 @@
-﻿using System;
-using Test.Api;
+﻿using Test.Api;
 using Test.Api.Infrastructure;
 using Test.Entity;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Test.AppService.Infrastructure;
 
@@ -19,7 +17,7 @@ public abstract class DataService<TInterface, TEntity>(
 
     public async Task<TInterface> InsertNewAsync(TInterface entity)
     {
-        TEntity data =  _mapper.New(entity);
+        TEntity data = _mapper.New(entity);
         return await InsertNewAsync(data);
 
     }
@@ -31,10 +29,10 @@ public abstract class DataService<TInterface, TEntity>(
     }
 
 
-    public async  Task<TInterface> ApplyUpdateAsync(TInterface entity)
+    public async Task<TInterface> ApplyUpdateAsync(TInterface entity)
     {
         TEntity data = await Repository.SelectAsync(entity.Guid);
-        _mapper.Map(entity,data);
+        _mapper.Map(entity, data);
         return await ApplyUpdateAsync(data);
     }
     protected virtual async Task<TEntity> ApplyUpdateAsync(TEntity entity)

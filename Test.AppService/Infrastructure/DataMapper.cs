@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using Test.Api;
 using Test.Api.Infrastructure;
 using Test.AppService.Infrastructure.CodeGen;
@@ -9,7 +7,7 @@ using Test.Entity;
 
 namespace Test.AppService.Infrastructure;
 
-public class DataMapper<TSource,TDestination>
+public class DataMapper<TSource, TDestination>
 {
     private readonly Dictionary<string, PropertyInfo> props;
 
@@ -32,8 +30,8 @@ public class DataMapper<TSource,TDestination>
 
     private readonly struct IncludeInfo
     {
-        public readonly PropertyInfo      Property;
-        public readonly LambdaExpression  Expression;
+        public readonly PropertyInfo Property;
+        public readonly LambdaExpression Expression;
 
         public IncludeInfo(LambdaExpression property, LambdaExpression expression)
         {
@@ -54,7 +52,7 @@ public class DataMapper<TSource,TDestination>
 
     private readonly List<IncludeInfo> includes = new();
 
-    public DataMapper<TSource, TDestination> Include<TValue>(Expression<Func<TDestination, TValue>> property , Expression<Func<TSource,TValue>> expression)
+    public DataMapper<TSource, TDestination> Include<TValue>(Expression<Func<TDestination, TValue>> property, Expression<Func<TSource, TValue>> expression)
     {
         includes.Add(new IncludeInfo(property, expression));
         return this;
@@ -67,9 +65,9 @@ public class DataMapper<TSource,TDestination>
 
         DataMappingBuilder<TSource, TDestination> builder = new();
 
-        foreach (PropertyInfo targetProp in typeof(TDestination).GetAllProperties().Where(x=>x.CanWrite))
+        foreach (PropertyInfo targetProp in typeof(TDestination).GetAllProperties().Where(x => x.CanWrite))
         {
-            if(props.TryGetValue(targetProp.Name , out PropertyInfo? sourceProp) && sourceProp != null && targetProp.PropertyType == sourceProp.PropertyType && sourceProp.CanRead && targetProp.CanWrite)
+            if (props.TryGetValue(targetProp.Name, out PropertyInfo? sourceProp) && sourceProp != null && targetProp.PropertyType == sourceProp.PropertyType && sourceProp.CanRead && targetProp.CanWrite)
             {
                 builder.AppendCopyProperty(sourceProp, targetProp);
             }

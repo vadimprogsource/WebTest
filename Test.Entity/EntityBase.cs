@@ -1,9 +1,8 @@
-﻿using System;
-using Test.Api;
+﻿using Test.Api;
 
 namespace Test.Entity
 {
-    public class EntityBase : IdentityObject , IEntity
+    public class EntityBase : IdentityObject, IEntity
     {
         public DateTime CreatedAt { get; set; }
 

@@ -1,11 +1,10 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 
 namespace Test.Entity.Domain
 {
-    public class ForkFault : EntityBase , IForkFault
+    public class ForkFault : EntityBase, IForkFault
     {
-       
+
         public DateTime ProblemDetectedAt { get; set; }
         public DateTime? ProblemResolvedAt { get; set; }
         public string Reason { get; set; } = string.Empty;
@@ -17,7 +16,7 @@ namespace Test.Entity.Domain
         public ForkFault() { ProblemDetectedAt = DateTime.UtcNow; }
 
         public ForkFault(IForkFault source) : base(source) => Update(source);
-   
+
         public ForkFault Update(IForkFault source)
         {
             ProblemDetectedAt = source.ProblemDetectedAt;

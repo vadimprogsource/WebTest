@@ -6,13 +6,13 @@ namespace Test.AppService.Domain.Security
 {
     public class AuthProvider(IDataRepository<User> userRepository, ISessionStorage storage) : IAuthProvider
     {
-        private static DateTime _nextCallTime; 
+        private static DateTime _nextCallTime;
 
         protected async Task TryTerminateExpired()
         {
-            if (DateTime.UtcNow>=_nextCallTime)
+            if (DateTime.UtcNow >= _nextCallTime)
             {
-               await storage.DeleteExpiredSessions(DateTime.UtcNow);
+                await storage.DeleteExpiredSessions(DateTime.UtcNow);
                 _nextCallTime = DateTime.UtcNow.Add(UserSession.DefaultExpiredTimeOut);
             }
         }
@@ -22,15 +22,16 @@ namespace Test.AppService.Domain.Security
         {
             await TryTerminateExpired();
 
-           Guid  passwordGuid = new User { Login = login }.SetPassword(password).Password;
-           User? user         = await userRepository.SelectAsync(x => x.Password == passwordGuid && x.Login == login);
+            User  log  = new User { Login = login }.SetPassword(password);
+            User? user = await userRepository.SelectAsync(x => x.PasswordGuid == log.PasswordGuid && x.Login == login);
 
-            if (user == null)
+            if (log.CompareTo(user))
             {
-                return UserSession.Empty;
+                return await storage.CreateSessionAsync(user!, DateTime.UtcNow, UserSession.DefaultExpiredTimeOut);
+               
             }
 
-            return await storage.CreateSessionAsync(user , DateTime.UtcNow , UserSession.DefaultExpiredTimeOut);
+            return UserSession.Empty;
         }
 
         public async Task<IUserSession> GetSessionAsync(Guid sid)
@@ -42,7 +43,7 @@ namespace Test.AppService.Domain.Security
                 return UserSession.Empty;
             }
 
-            IUserSession session =  await storage.GetSessionAsync(sid);
+            IUserSession session = await storage.GetSessionAsync(sid);
 
             if (session.HasExpired)
             {
@@ -60,7 +61,7 @@ namespace Test.AppService.Domain.Security
 
         public async Task<IUser> GetSessionUserAsync(IUserSession session)
         {
-            if(session.HasExpired)
+            if (session.HasExpired)
             {
                 throw new AccessViolationException();
             }
@@ -82,7 +83,7 @@ namespace Test.AppService.Domain.Security
             await storage.DeleteUserSessions(user);
         }
 
-     
+
     }
 }
 

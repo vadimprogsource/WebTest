@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -8,7 +7,7 @@ namespace Test.AppService.Infrastructure.CodeGen;
 public readonly struct FieldDelegateBuilder
 {
 
-    public readonly Delegate     Func;
+    public readonly Delegate Func;
     public readonly FieldBuilder Field;
 
     public MethodInfo Invoke => Field.FieldType.GetMethod("Invoke") ?? throw new NotSupportedException($"{Field.FieldType.Name} dont support invoke!");

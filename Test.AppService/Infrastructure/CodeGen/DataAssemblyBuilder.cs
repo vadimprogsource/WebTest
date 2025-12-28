@@ -1,17 +1,16 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Test.AppService.Infrastructure.CodeGen
 {
     public static class DataAssemblyBuilder
     {
-        private static  AssemblyBuilder? asm;
-        private static  ModuleBuilder? module;
+        private static AssemblyBuilder? asm;
+        private static ModuleBuilder? module;
 
         public static TypeBuilder DefineType(string name)
         {
-            asm    ??= AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{typeof(DataAssemblyBuilder).Name}-{Guid.NewGuid()}"), AssemblyBuilderAccess.RunAndCollect);
+            asm ??= AssemblyBuilder.DefineDynamicAssembly(new AssemblyName($"{typeof(DataAssemblyBuilder).Name}-{Guid.NewGuid()}"), AssemblyBuilderAccess.RunAndCollect);
             module ??= asm.DefineDynamicModule("root");
             return module.DefineType(name, TypeAttributes.Class);
         }

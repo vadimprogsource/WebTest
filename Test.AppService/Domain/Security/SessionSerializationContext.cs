@@ -1,5 +1,4 @@
-﻿using System;
-using System.Buffers;
+﻿using System.Buffers;
 using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Security
@@ -7,9 +6,9 @@ namespace Test.AppService.Domain.Security
     public static class SessionSerializationContext
     {
         private const int GuidSize = 2 * sizeof(long);
-        private const int Size = 2 * sizeof(long) + GuidSize ; 
+        private const int Size = 2 * sizeof(long) + GuidSize;
 
-    
+
 
         public static string Serialize(UserSession session)
         {
@@ -39,14 +38,14 @@ namespace Test.AppService.Domain.Security
             {
                 if (Convert.TryFromBase64String(state, buff, out int bytes) && bytes == Size)
                 {
-                    using BinaryReader reader = new (new MemoryStream(buff));
+                    using BinaryReader reader = new(new MemoryStream(buff));
                     reader.BaseStream.Seek(0, SeekOrigin.Begin);
                     session.CreatedAt = DateTime.FromBinary(reader.ReadInt64());
                     session.ExpiredAt = DateTime.FromBinary(reader.ReadInt64());
-                    session.Guid = new Guid( reader.ReadBytes(GuidSize));
+                    session.Guid = new Guid(reader.ReadBytes(GuidSize));
                 }
             }
-            catch
+            finally
             {
                 ArrayPool<byte>.Shared.Return(buff);
             }

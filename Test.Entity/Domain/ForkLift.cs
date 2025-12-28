@@ -1,9 +1,8 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 
 namespace Test.Entity.Domain
 {
-    public class ForkLift : EntityBase , IForkLift
+    public class ForkLift : EntityBase, IForkLift
     {
         public string Brand { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
@@ -32,10 +31,10 @@ namespace Test.Entity.Domain
 
             if (source.ModifiedBy != null)
             {
-                ModifiedByGuid = source.ModifiedBy.Guid; 
+                ModifiedByGuid = source.ModifiedBy.Guid;
             }
 
-            
+
         }
 
         public ForkLift Update(IForkLift source)

@@ -1,12 +1,11 @@
-﻿using System;
-using Test.Api;
+﻿using Test.Api;
 using Test.Api.Domain;
 
 namespace TestWebApi.Models
 {
     public record ForkFaultModel : IForkFault
     {
-    
+
 
         public Guid Guid { get; set; }
         public DateTime? ProblemDetectedAt { get; set; }

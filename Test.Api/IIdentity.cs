@@ -1,9 +1,8 @@
-﻿using System;
-namespace Test.Api
+﻿namespace Test.Api
 {
     public interface IIdentity
     {
-        Guid Guid    { get; }
+        Guid Guid { get; }
         bool IsValid { get; }
     }
 }

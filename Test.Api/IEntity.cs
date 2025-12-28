@@ -1,5 +1,4 @@
-﻿using System;
-namespace Test.Api
+﻿namespace Test.Api
 {
     public interface IEntity : IIdentity
     {

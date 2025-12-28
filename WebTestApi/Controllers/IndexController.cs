@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace TestWebApi.Controllers;
 
@@ -11,7 +10,7 @@ public class IndexController : ControllerBase
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public IActionResult Index()
     {
-        return  File("/index.html","text/html");
+        return File("/index.html", "text/html");
     }
 }
 

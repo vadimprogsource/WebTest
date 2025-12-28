@@ -1,5 +1,4 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 using Test.AppService.Infrastructure;
 using Test.Entity.Domain;
 

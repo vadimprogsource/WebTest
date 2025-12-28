@@ -1,10 +1,9 @@
-﻿using System;
-namespace Test.Api.Infrastructure
+﻿namespace Test.Api.Infrastructure
 {
-    public interface IDataMapper<TSource,TDesctination>
+    public interface IDataMapper<TSource, TDesctination>
     {
-        TDesctination New (TSource source);
-        TDesctination Map (TSource source, TDesctination desctination);
+        TDesctination New(TSource source);
+        TDesctination Map(TSource source, TDesctination desctination);
     }
 }
 

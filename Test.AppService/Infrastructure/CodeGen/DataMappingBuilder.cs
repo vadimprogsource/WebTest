@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using Test.Api.Infrastructure;
@@ -20,11 +19,11 @@ public class DataMappingBuilder<TSource, TDestination>
         type = DataAssemblyBuilder.DefineType($"DataMapper<{typeof(TSource).Name},{typeof(TDestination).Name}>");
         type.AddInterfaceImplementation(typeof(IDataMapper<TSource, TDestination>));
 
-        MethodBuilder map = type.DefineMethod("Map", MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.Public,CallingConventions.HasThis, typeof(TDestination), new[] {typeof(TSource) , typeof(TDestination) });
+        MethodBuilder map = type.DefineMethod("Map", MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.Public, CallingConventions.HasThis, typeof(TDestination), new[] { typeof(TSource), typeof(TDestination) });
         generator = map.GetILGenerator();
 
 
-        MethodBuilder @new = type.DefineMethod("New", MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.Public,CallingConventions.HasThis, typeof(TDestination), new[] { typeof(TSource) });
+        MethodBuilder @new = type.DefineMethod("New", MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.Public, CallingConventions.HasThis, typeof(TDestination), new[] { typeof(TSource) });
         ILGenerator gen = @new.GetILGenerator();
         gen.Emit(OpCodes.Ldarg_0);
         gen.Emit(OpCodes.Ldarg_1);
@@ -38,7 +37,7 @@ public class DataMappingBuilder<TSource, TDestination>
     {
         generator.Emit(OpCodes.Ldarg_2);
         generator.Emit(OpCodes.Ldarg_1);
-        generator.Call(fromProperty.GetGetMethod(true)?? throw new NullReferenceException($"getter property {fromProperty.Name} is null!"));
+        generator.Call(fromProperty.GetGetMethod(true) ?? throw new NullReferenceException($"getter property {fromProperty.Name} is null!"));
         generator.Call(toProperty.GetSetMethod(true) ?? throw new NullReferenceException($"setter property  {toProperty.Name} is null!"));
         return this;
     }
@@ -47,7 +46,7 @@ public class DataMappingBuilder<TSource, TDestination>
     public DataMappingBuilder<TSource, TDestination> AppendSetProperty(PropertyInfo property, LambdaExpression expression)
     {
 
-        FieldDelegateBuilder builder = new (type, expression, getters.Count);
+        FieldDelegateBuilder builder = new(type, expression, getters.Count);
         getters.Add(builder);
 
         generator.Emit(OpCodes.Ldarg_2);
@@ -92,7 +91,7 @@ public class DataMappingBuilder<TSource, TDestination>
         }
         else
         {
-            ctor = type.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard,Array.Empty<Type>());
+            ctor = type.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Array.Empty<Type>());
             gen = ctor.GetILGenerator();
             gen.Emit(OpCodes.Ret);
 

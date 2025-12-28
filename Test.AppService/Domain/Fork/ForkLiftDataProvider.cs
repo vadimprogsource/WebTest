@@ -1,12 +1,11 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 using Test.Api.Infrastructure;
 using Test.AppService.Infrastructure;
 using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fork;
 
-public class ForkLiftDataProvider : EntityDataProvider<IForkLift, ForkLift> 
+public class ForkLiftDataProvider : EntityDataProvider<IForkLift, ForkLift>
 {
 
 

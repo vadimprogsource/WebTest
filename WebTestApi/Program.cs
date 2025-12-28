@@ -1,22 +1,18 @@
-﻿using System;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using StackExchange.Redis;
 using Test.Api.Domain;
 using Test.Api.Infrastructure;
-using Test.AppService.Domain;
-using Test.Entity.Domain;
-using Test.Repository.Domain;
-using Microsoft.OpenApi.Models;
-using TestWebApi.Services;
-using Microsoft.Extensions.FileProviders;
+using Test.AppService.Domain.Fault;
 using Test.AppService.Domain.Fork;
 using Test.AppService.Domain.Security;
-using Test.AppService.Domain.Fault;
-using StackExchange.Redis;
 using Test.AppService.Infrastructure;
+using Test.Entity.Domain;
+using Test.Repository.Domain;
 using TestWebApi.Models;
+using TestWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,8 +58,8 @@ builder.Services.AddSingleton(new ForkLiftDataMapper().Compile());
 builder.Services.AddSingleton(new ForkFaultDataMapper().Compile());
 
 
-builder.Services.AddSingleton(new DataMapper<IForkLift,ForkLiftModel>().Include(x=>x.ModifiedBy,x=>x.ModifiedBy.Name).Include(x=>x.ModifiedAt , x=>x.ModifiedAt.ToLocalTime()).Compile());
-builder.Services.AddSingleton(new DataMapper<IForkFault, ForkFaultModel>().Include(x=>x.ProblemDetectedAt , x=>x.ProblemDetectedAt.ToLocalTime()).Include(x=>x.ProblemResolvedAt,x=>x.ProblemResolvedAt.HasValue?x.ProblemResolvedAt.Value.ToLocalTime():null).Compile());
+builder.Services.AddSingleton(new DataMapper<IForkLift, ForkLiftModel>().Include(x => x.ModifiedBy, x => x.ModifiedBy.Name).Include(x => x.ModifiedAt, x => x.ModifiedAt.ToLocalTime()).Compile());
+builder.Services.AddSingleton(new DataMapper<IForkFault, ForkFaultModel>().Include(x => x.ProblemDetectedAt, x => x.ProblemDetectedAt.ToLocalTime()).Include(x => x.ProblemResolvedAt, x => x.ProblemResolvedAt.HasValue ? x.ProblemResolvedAt.Value.ToLocalTime() : null).Compile());
 
 
 //builder.Services.AddSingleton<IConnectionMultiplexer>(x =>ConnectionMultiplexer.Connect("localhost:6376,abortConnect=false"));
@@ -71,21 +67,21 @@ builder.Services.AddSingleton(new DataMapper<IForkFault, ForkFaultModel>().Inclu
 
 switch (builder.Configuration.GetConnectionString("dbServer"))
 {
-    case "pgSql":  builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql")));break;
+    case "pgSql": builder.Services.AddDbContext<ForkDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("pgSql"))); break;
     case "mySql": //builder.Services.AddDbContext<ForkDbContext>(options =>options.UseMySQL(builder.Configuration.GetConnectionString("mySql")));
-                  break;
-    default: builder.Services.AddDbContext<ForkDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("msSql")));break;
+        break;
+    default: builder.Services.AddDbContext<ForkDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("msSql"))); break;
 }
 
 
 switch (builder.Configuration.GetConnectionString("sts"))
 {
-    case "memory": builder.Services.AddSingleton<ISessionStorage, MemorySessionStorage>();break;
+    case "memory": builder.Services.AddSingleton<ISessionStorage, MemorySessionStorage>(); break;
     case "redis":
-                  builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect("localhost:6376,abortConnect=false"));
-                  builder.Services.AddScoped<ISessionStorage, RedisSessionStorage>();break;
+        builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect("localhost:6376,abortConnect=false"));
+        builder.Services.AddScoped<ISessionStorage, RedisSessionStorage>(); break;
     default:
-                 builder.Services.AddScoped<ISessionStorage, DataSessionStorage>();break;
+        builder.Services.AddScoped<ISessionStorage, DataSessionStorage>(); break;
 }
 
 
@@ -105,14 +101,14 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
      {
-         
+
          options.TokenValidationParameters = new TokenValidationParameters
          {
              ValidateIssuer = false,
              ValidateAudience = false,
-             ValidateLifetime = true, 
-             ValidateIssuerSigningKey = false, 
-             RequireSignedTokens = false 
+             ValidateLifetime = true,
+             ValidateIssuerSigningKey = false,
+             RequireSignedTokens = false
          };
      });
 
@@ -133,24 +129,17 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    options.AddSecurityRequirement(doc=>
     {
+        OpenApiSecuritySchemeReference? schemeRef = new("Bearer");
+        OpenApiSecurityRequirement? requirement = new()
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
-            },
-            new List<string>()
-        }
+            [schemeRef] = []
+        };
+        return requirement;
     });
+
+  
 });
 
 

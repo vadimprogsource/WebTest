@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
-using Microsoft.AspNetCore.Authorization;
 using Test.Api.Domain;
 using Test.Api.Infrastructure;
 
 namespace TestWebApi.Services;
 
-public class AuthUser: ClaimsPrincipal
+public class AuthUser : ClaimsPrincipal
 {
     private const string Auth = "Authorization";
 
@@ -30,7 +29,7 @@ public class AuthUser: ClaimsPrincipal
     private readonly ClaimsPrincipal principal;
     private readonly IUserSession session;
 
-    private AuthUser(ClaimsPrincipal principal,IUserSession session)
+    private AuthUser(ClaimsPrincipal principal, IUserSession session)
     {
         this.principal = principal;
         this.session = session;
@@ -51,7 +50,7 @@ public class AuthUser: ClaimsPrincipal
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public static string SetAuthorize(HttpContext context ,  IUserSession session)
+    public static string SetAuthorize(HttpContext context, IUserSession session)
     {
         string token = GenerateToken(session);
         context.Response.Headers[Auth] = $"Bearer {token}";
@@ -64,7 +63,7 @@ public class AuthUser: ClaimsPrincipal
         context.Response.Headers[Auth] = string.Empty;
         context.Response.Cookies.Delete(Auth);
 
-        if(context.User is AuthUser u)
+        if (context.User is AuthUser u)
         {
             context.User = u.principal;
         }
@@ -74,7 +73,7 @@ public class AuthUser: ClaimsPrincipal
     public static bool HasAuthorize(HttpContext context)
     {
         Endpoint? endpoint = context.GetEndpoint();
-        return endpoint != null && endpoint.Metadata.GetMetadata<AuthorizeAttribute>()!=null;
+        return endpoint != null && endpoint.Metadata.GetMetadata<AuthorizeAttribute>() != null;
     }
 
 

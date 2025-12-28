@@ -1,5 +1,4 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 using Test.Api.Infrastructure;
 using Test.Entity.Domain;
 
@@ -9,7 +8,7 @@ namespace Test.AppService.Domain.Security
     {
         public async Task<IUserSession> CreateSessionAsync(IUser user, DateTime createdAt, TimeSpan expired)
         {
-            UserSession session = new ()
+            UserSession session = new()
             {
                 Guid = Guid.NewGuid(),
                 UserGuid = user.Guid,
@@ -26,11 +25,11 @@ namespace Test.AppService.Domain.Security
         public Task DeleteExpiredSessions(DateTime expired) => repository.DeleteAsync(x => x.ExpiredAt >= expired);
 
         public Task DeleteSession(Guid guid) => repository.DeleteAsync(x => x.Guid == guid);
-   
-        public Task DeleteUserSessions(IUser user) => repository.DeleteAsync(x => x.UserGuid == user.Guid);
-        
 
-       
+        public Task DeleteUserSessions(IUser user) => repository.DeleteAsync(x => x.UserGuid == user.Guid);
+
+
+
     }
 }
 

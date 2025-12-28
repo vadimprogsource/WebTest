@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Test.Api.Domain;
 using Test.Api.Infrastructure;
@@ -22,7 +21,7 @@ public class AuthController(IAuthProvider provider, IUserContext context) : Cont
             return Unauthorized();
         }
 
-        return Ok(new { session.Guid ,session.Expired });
+        return Ok(new { session.Guid, session.Expired });
     }
 
 
@@ -36,7 +35,7 @@ public class AuthController(IAuthProvider provider, IUserContext context) : Cont
             return Unauthorized();
         }
 
-        return Ok(new {Token= AuthUser.SetAuthorize(HttpContext, session) });
+        return Ok(new { Token = AuthUser.SetAuthorize(HttpContext, session) });
     }
 
 
@@ -55,7 +54,7 @@ public class AuthController(IAuthProvider provider, IUserContext context) : Cont
         return Ok();
     }
 
-    
+
 
 
 }

@@ -1,5 +1,4 @@
-﻿using System;
-namespace TestWebApi.Models
+﻿namespace TestWebApi.Models
 {
     public record LoginModel
     {

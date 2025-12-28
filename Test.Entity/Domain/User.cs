@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Test.Api;
 using Test.Api.Domain;
@@ -12,22 +11,48 @@ public class User : EntityBase, IUser
 
     public string Login { get; set; } = string.Empty;
 
-    public Guid Password { get; set; } = Guid.Empty;
+    public Guid PasswordGuid { get; set; } = Guid.Empty;
+    public byte[] PasswordHash { get; set; } = [];
 
-    public User():base() { }
-    public User(IEntity source) : base(source) => Name=source.ToString()??string.Empty; 
+    public User() : base() { }
+    public User(IEntity source) : base(source) => Name = source.ToString() ?? string.Empty;
 
     public User(IUser source) : base(source) => Name = source.Name;
 
 
     public User SetPassword(string password)
     {
-        Password = new Guid(MD5.HashData(Encoding.ASCII.GetBytes($"{Login}/{password}")));
+        byte[] image = Encoding.ASCII.GetBytes($"{Login}/{password}");
+        PasswordGuid = new Guid(MD5.HashData(image));
+        PasswordHash = SHA256.HashData(image);
         return this;
     }
 
 
-    public override bool IsValid => base.IsValid && Password!=Guid.Empty;
+    public bool CompareTo(User? user)
+    {
+        if (user!=null && PasswordGuid == user.PasswordGuid && user.PasswordHash.Length == PasswordHash.Length)
+        {
+            byte[] p1 = PasswordHash, p2 = user.PasswordHash;
+            int j = p1.Length;
+
+            if (j == p2.Length)
+            {
+                --j;
+
+                for (int i = 0; i < j; i++, j--)
+                {
+                    if (p1[i] != p2[i] && p1[j] != p2[j]) return false;
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public override bool IsValid => base.IsValid && PasswordGuid != Guid.Empty;
 
 
 

@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Test.Api.Domain;
-using Test.Api.Infrastructure;
-using Test.Entity.Domain;
 using TestWebApi.Models;
 
 namespace TestWebApi.Controllers
@@ -12,7 +9,7 @@ namespace TestWebApi.Controllers
     [Authorize]
     public class ForkLiftFaultController : ApiController<IForkFault, ForkFaultModel>
     {
-        
+
 
 
         [HttpGet("new/{ownerGuid}")]
@@ -21,21 +18,21 @@ namespace TestWebApi.Controllers
 
 
         [HttpPost("{ownerGuid}")]
-        public virtual async Task<IActionResult> PostAsync([FromRoute]Guid ownerGuid, [FromBody] FilterModel filter)
+        public virtual async Task<IActionResult> PostAsync([FromRoute] Guid ownerGuid, [FromBody] FilterModel filter)
         {
             if (filter.MaxCount < 1 || filter.MaxCount > 1000)
             {
                 filter.MaxCount = 50;
             }
-           
-            IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerGuid , filter);
+
+            IForkFault[] entities = await Resolve<IForkFaultProvider>().GetFaultsAsync(ownerGuid, filter);
             return Models(entities);
-           
+
         }
 
 
         [HttpPut("{ownerGuid}")]
-        public async Task<IActionResult> PutAsync([FromRoute]Guid ownerGuid, [FromBody] ForkFaultModel model)
+        public async Task<IActionResult> PutAsync([FromRoute] Guid ownerGuid, [FromBody] ForkFaultModel model)
         {
             if (Validator.Validate(model))
             {
@@ -52,9 +49,9 @@ namespace TestWebApi.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public override Task<IActionResult> GetNewAsync() => throw new NotSupportedException();
-        
 
-        
+
+
     }
 }
 

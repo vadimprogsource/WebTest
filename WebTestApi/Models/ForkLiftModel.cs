@@ -1,10 +1,9 @@
-﻿using System;
-using Test.Api;
+﻿using Test.Api;
 using Test.Api.Domain;
 
 namespace TestWebApi.Models;
 
-public record ForkLiftModel : EntityModel  ,  IForkLift
+public record ForkLiftModel : EntityModel, IForkLift
 {
 
     public string? Brand { get; set; }

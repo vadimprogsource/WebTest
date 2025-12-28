@@ -1,11 +1,10 @@
-﻿using System;
-using Test.Api;
+﻿using Test.Api;
 
 namespace TestWebApi.Models
 {
     public record EntityModel : IEntity
     {
-        public Guid Guid { get;set; }
+        public Guid Guid { get; set; }
 
         DateTime IEntity.CreatedAt => DateTime.UtcNow;
 

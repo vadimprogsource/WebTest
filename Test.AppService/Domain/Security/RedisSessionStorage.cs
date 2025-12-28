@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 using Test.Api.Domain;
 using Test.Api.Infrastructure;
 using Test.Entity.Domain;
@@ -17,7 +16,7 @@ public class RedisSessionStorage(IConnectionMultiplexer redis) : ISessionStorage
 
     public async Task<IUserSession> CreateSessionAsync(IUser user, DateTime createdAt, TimeSpan expired)
     {
-        UserSession session = new ()
+        UserSession session = new()
         {
             Guid = Guid.NewGuid(),
             UserGuid = user.Guid,
@@ -47,7 +46,7 @@ public class RedisSessionStorage(IConnectionMultiplexer redis) : ISessionStorage
         {
             return UserSession.Empty;
         }
-      
+
     }
 
     public async Task DeleteSession(Guid guid)
@@ -60,11 +59,11 @@ public class RedisSessionStorage(IConnectionMultiplexer redis) : ISessionStorage
     public async Task DeleteUserSessions(IUser user)
     {
         string userSessionsKey = GetUserSessionsKey(user.Guid);
-        var sessionIds = await _redis.SetMembersAsync(userSessionsKey);
+        RedisValue[] sessionIds = await _redis.SetMembersAsync(userSessionsKey);
 
-        foreach (var sessionId in sessionIds)
+        foreach (RedisValue sessionId in sessionIds)
         {
-            await _redis.KeyDeleteAsync(GetSessionKey(Guid.Parse(sessionId!)));
+            await _redis.KeyDeleteAsync(GetSessionKey(Guid.Parse((string)sessionId!)));
         }
 
         await _redis.KeyDeleteAsync(userSessionsKey);

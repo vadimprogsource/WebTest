@@ -1,5 +1,4 @@
-﻿using System;
-using Test.Api.Infrastructure;
+﻿using Test.Api.Infrastructure;
 
 namespace TestWebApi.Models
 {

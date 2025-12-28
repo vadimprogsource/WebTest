@@ -1,5 +1,4 @@
-﻿using System;
-namespace Test.Api.Domain;
+﻿namespace Test.Api.Domain;
 
 public interface IForkFaultFactory
 {

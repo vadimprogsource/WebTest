@@ -1,17 +1,16 @@
-﻿using System;
-using Test.Api.Domain;
+﻿using Test.Api.Domain;
 using Test.Api.Infrastructure;
 using Test.AppService.Infrastructure;
 using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fork
 {
-    public class ForkLiftDataService : EntityDataService<IForkLift, ForkLift> , IForkLiftService
+    public class ForkLiftDataService : EntityDataService<IForkLift, ForkLift>, IForkLiftService
     {
 
         private readonly IUserContext userContext;
 
-        public ForkLiftDataService(IDataRepository<ForkLift> repository, IDataMapper<IForkLift, ForkLift> mapper,IUserContext context) : base(repository, mapper)
+        public ForkLiftDataService(IDataRepository<ForkLift> repository, IDataMapper<IForkLift, ForkLift> mapper, IUserContext context) : base(repository, mapper)
         {
             userContext = context;
         }
@@ -51,7 +50,7 @@ namespace Test.AppService.Domain.Fork
             return obj;
         }
 
-      
+
     }
 }
 

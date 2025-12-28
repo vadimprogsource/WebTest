@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Test.Repository.Domain;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Test.Api.Domain;
+using Test.Repository.Domain;
 
 namespace TestWebApi.Controllers;
 
@@ -18,7 +16,7 @@ public class DataBaseController(ForkDbContext context) : ControllerBase
     }
 
     [HttpPut]
-    public  IActionResult CreateDataBase()
+    public IActionResult CreateDataBase()
     {
         context.Database.EnsureCreated();
         return NoContent();

@@ -1,5 +1,4 @@
-﻿using System;
-namespace Test.Api.Infrastructure
+﻿namespace Test.Api.Infrastructure
 {
     public interface IQueryableContext
     {

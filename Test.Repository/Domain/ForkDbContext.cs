@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Test.Api.Domain;
-using Test.Entity.Domain;
+﻿using Microsoft.EntityFrameworkCore;
 using Test.Repository.Domain.Mapping;
 
 namespace Test.Repository.Domain;

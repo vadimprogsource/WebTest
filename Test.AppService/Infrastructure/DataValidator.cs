@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 using Test.Api;
 using Test.Api.Infrastructure;
@@ -12,7 +11,7 @@ namespace Test.AppService.Infrastructure
         {
             private readonly MemberInfo memberInfo;
 
-    
+
 
             public string Code { get; }
 
@@ -20,7 +19,7 @@ namespace Test.AppService.Infrastructure
 
             public string Source => memberInfo.Name;
 
-            public Error(Expression expression , string code , string reason)
+            public Error(Expression expression, string code, string reason)
             {
                 Code = code;
                 Reason = reason;
@@ -34,7 +33,7 @@ namespace Test.AppService.Infrastructure
             }
         }
 
-        public List<IError> errors = new ();
+        public List<IError> errors = new();
 
         protected void Throw<TValue>(Expression<Func<TEntity, TValue>> property, string code = "", string reason = "")
         {
@@ -42,12 +41,12 @@ namespace Test.AppService.Infrastructure
         }
 
         protected abstract void OnValidate(TEntity entity);
-        
+
 
         public bool Validate(TEntity entity)
         {
             OnValidate(entity);
-            return errors.Count<1;
+            return errors.Count < 1;
             throw new NotImplementedException();
         }
 
