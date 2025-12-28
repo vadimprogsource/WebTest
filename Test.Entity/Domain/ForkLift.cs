@@ -9,11 +9,11 @@ namespace Test.Entity.Domain
         public decimal Capacity { get; set; } // up to 3 digits after decimal
         public bool IsActive { get; set; } = false;
         public DateTime ModifiedAt { get; set; } = DateTime.Now;
-        public User ModifiedBy { get; set; } = new User();
+        public User ModifiedBy { get; set; } = User.Empty;
 
         public Guid ModifiedByGuid { get; set; }
 
-        public List<ForkFault> Faults { get; set; } = new();
+        public List<ForkFault> Faults { get; set; } = [];
 
         IReadOnlyCollection<IForkFault> IForkLift.Faults => Faults;
 

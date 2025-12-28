@@ -9,9 +9,7 @@ namespace Test.Repository.Domain.Mapping
         protected override void Map(EntityTypeBuilder<User> entity)
         {
             base.Map(entity);
-
-            Guid password = new User { Login = "admin" }.SetPassword("1").PasswordGuid;
-            entity.HasData(new User { Guid = Guid.NewGuid(), Name = "Admin", Login = "admin", PasswordGuid = password });
+            entity.HasData(User.CreateNewLogin("admin", "1"));
         }
     }
 }

@@ -50,7 +50,7 @@ public class DataMapper<TSource, TDestination>
     }
 
 
-    private readonly List<IncludeInfo> includes = new();
+    private readonly List<IncludeInfo> includes = [];
 
     public DataMapper<TSource, TDestination> Include<TValue>(Expression<Func<TDestination, TValue>> property, Expression<Func<TSource, TValue>> expression)
     {

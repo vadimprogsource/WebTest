@@ -7,14 +7,26 @@ namespace Test.Entity.Domain;
 
 public class User : EntityBase, IUser
 {
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
 
-    public string Login { get; set; } = string.Empty;
+    public required string Login { get; set; } 
 
-    public Guid PasswordGuid { get; set; } = Guid.Empty;
-    public byte[] PasswordHash { get; set; } = [];
+    public required Guid PasswordGuid { get; set; } 
+    public required byte[] PasswordHash { get; set; }
 
-    public User() : base() { }
+
+    public static User Empty => new() { Login = string.Empty, Name = string.Empty, PasswordGuid = Guid.Empty, PasswordHash = [] };
+    
+    public static User CreateNewLogin(string login, string password)
+    {
+        User user = Empty;
+        user.Login = login;
+        return user.SetPassword(password);
+    }
+
+    public User() : base() 
+    { 
+    }
     public User(IEntity source) : base(source) => Name = source.ToString() ?? string.Empty;
 
     public User(IUser source) : base(source) => Name = source.Name;
@@ -22,7 +34,7 @@ public class User : EntityBase, IUser
 
     public User SetPassword(string password)
     {
-        byte[] image = Encoding.ASCII.GetBytes($"{Login}/{password}");
+        byte[] image = Encoding.ASCII.GetBytes($"web[{Login}/{password}]=test");
         PasswordGuid = new Guid(MD5.HashData(image));
         PasswordHash = SHA256.HashData(image);
         return this;

@@ -22,7 +22,7 @@ namespace Test.AppService.Domain.Security
         {
             await TryTerminateExpired();
 
-            User  log  = new User { Login = login }.SetPassword(password);
+            User log = User.CreateNewLogin(login, password);
             User? user = await userRepository.SelectAsync(x => x.PasswordGuid == log.PasswordGuid && x.Login == login);
 
             if (log.CompareTo(user))
