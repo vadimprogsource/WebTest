@@ -54,7 +54,7 @@ public class User : EntityBase, IUser
 
                 for (int i = 0; i < j; i++, j--)
                 {
-                    if (p1[i] != p2[i] && p1[j] != p2[j]) return false;
+                    if (p1[i] != p2[i] || p1[j] != p2[j]) return false;
                 }
                 return true;
             }

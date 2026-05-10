@@ -10,7 +10,9 @@ public class ForkFaultDataProvider(IDataRepository<ForkFault> repository)
 {
     public async Task<IForkFault[]> GetFaultsAsync(Guid forkGuid, IFilterData filter)
     {
-        return await Repository.SelectAsync(query => ApplyFilter(query.Where(x => x.ForkLiftGuid == forkGuid), filter));
+        IQueryContext<ForkFault> context = Repository.Context;
+        ApplyFilter(context.Where(x => x.ForkLiftGuid == forkGuid),filter);
+        return await context.ToArrayAsync();
     }
 }
 

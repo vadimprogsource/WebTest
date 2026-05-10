@@ -11,6 +11,7 @@ namespace Test.Repository.Infrastructure
 
         protected readonly DbContext Context = context;
 
+        IQueryContext<TEntity> IDataRepository<TEntity>.Context => new DataQueryContext<TEntity>(Context.Set<TEntity>());
 
         protected IQueryable<TEntity> GetQueryable() => Context.Set<TEntity>().AsQueryable();
 

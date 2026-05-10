@@ -39,7 +39,7 @@ namespace Test.AppService.Domain.Fork
 
         public async Task<IForkLift> SetActiveAsync(Guid guid, bool active)
         {
-            ForkLift obj = await Repository.SelectAsync(guid);
+            ForkLift obj = await Repository.Context.FirstAsync(x=>x.Guid == guid);
 
             if (obj.IsActive != active)
             {

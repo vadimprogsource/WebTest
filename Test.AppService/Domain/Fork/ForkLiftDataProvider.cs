@@ -13,17 +13,16 @@ public class ForkLiftDataProvider : EntityDataProvider<IForkLift, ForkLift>
     {
     }
 
-    protected override IQueryable<ForkLift> ApplyFilter(IQueryable<ForkLift> query, IFilterData filter)
+    protected override void ApplyFilter(IQueryContext<ForkLift> context, IFilterData filter)
     {
-
         if (!string.IsNullOrWhiteSpace(filter.SearchPattern))
         {
-            query = query.Where(x => x.Number.Contains(filter.SearchPattern));
+            context.Where(x => x.Number.Contains(filter.SearchPattern));
         }
 
-        return base.ApplyFilter(query, filter);
-    }
+        base.ApplyFilter(context, filter);
 
+    }
 
 }
 

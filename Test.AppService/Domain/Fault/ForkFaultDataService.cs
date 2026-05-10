@@ -14,7 +14,7 @@ public class ForkFaultDataService(
     public async Task<IForkFault> AddFaultAsync(Guid forkGuid, IForkFault fault)
     {
         ForkFault entity = new ForkFault().Update(fault);
-        entity.ForkLift = await forkLiftRepository.SelectAsync(forkGuid);
+        entity.ForkLift = await forkLiftRepository.Context.FirstAsync(x=>x.Guid == forkGuid);
         entity.ForkLiftGuid = entity.ForkLift.Guid;
         return await InsertNewAsync(entity);
 

@@ -13,18 +13,21 @@ public class DataProvider<TInterface, TEntity>(IDataRepository<TEntity> reposito
 
     public async Task<TInterface[]> GetByFilterAsync(IFilterData filter)
     {
-        return await Repository.SelectAsync(query => ApplyFilter(query, filter));
+
+        IQueryContext<TEntity> context = Repository.Context;
+        ApplyFilter(context, filter);
+        return await context.ToArrayAsync();
     }
 
-    public virtual async Task<TInterface> GetDataAsync(Guid guid) => await Repository.SelectAsync(guid);
+    public virtual async Task<TInterface> GetDataAsync(Guid guid) => await Repository.Context.FirstAsync(x=>x.Guid == guid);
 
 
-
-    protected virtual IQueryable<TEntity> ApplyFilter(IQueryable<TEntity> query, IFilterData filter)
+    protected virtual void ApplyFilter(IQueryContext<TEntity> context, IFilterData filter)
     {
-        return query.Take(filter.MaxCount);
-        //return query.OrderBy(x => x.Id).Take(filter.MaxCount);
+        context.Take(filter.MaxCount);
     }
+
+    
 
 
 }
@@ -34,9 +37,13 @@ public class EntityDataProvider<TInterface, TEntity>(IDataRepository<TEntity> re
     where TInterface : IEntity
     where TEntity : EntityBase, TInterface
 {
-    protected override IQueryable<TEntity> ApplyFilter(IQueryable<TEntity> query, IFilterData filter)
+
+    protected override void ApplyFilter(IQueryContext<TEntity> context, IFilterData filter)
     {
-        return base.ApplyFilter(query.OrderBy(x => x.CreatedAt), filter);
+        context.OrderBy(x => x.CreatedAt);
+        base.ApplyFilter(context, filter);
     }
+
+  
 }
 

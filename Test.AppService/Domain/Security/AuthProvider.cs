@@ -23,7 +23,7 @@ namespace Test.AppService.Domain.Security
             await TryTerminateExpired();
 
             User log = User.CreateNewLogin(login, password);
-            User? user = await userRepository.SelectAsync(x => x.PasswordGuid == log.PasswordGuid && x.Login == login);
+            User? user = await userRepository.Context.Where(x => x.PasswordGuid == log.PasswordGuid && x.Login == login).ToObjectAsync();
 
             if (log.CompareTo(user))
             {
@@ -66,7 +66,7 @@ namespace Test.AppService.Domain.Security
                 throw new AccessViolationException();
             }
 
-            IUser user = await userRepository.SelectAsync(session.UserGuid);
+            IUser user = await userRepository.Context.FirstAsync(x=>x.Guid == session.UserGuid);
             return user;
         }
 

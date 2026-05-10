@@ -31,7 +31,7 @@ public abstract class DataService<TInterface, TEntity>(
 
     public async Task<TInterface> ApplyUpdateAsync(TInterface entity)
     {
-        TEntity data = await Repository.SelectAsync(entity.Guid);
+        TEntity data = await Repository.Context.FirstAsync(x=>x.Guid == entity.Guid);
         _mapper.Map(entity, data);
         return await ApplyUpdateAsync(data);
     }

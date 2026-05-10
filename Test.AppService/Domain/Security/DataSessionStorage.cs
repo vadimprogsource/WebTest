@@ -20,7 +20,7 @@ namespace Test.AppService.Domain.Security
             return await repository.InsertAsync(session);
         }
 
-        public async Task<IUserSession> GetSessionAsync(Guid guid) => await repository.SelectAsync(x => x.Guid == guid) ?? UserSession.Empty;
+        public async Task<IUserSession> GetSessionAsync(Guid guid) => await repository.Context.Where(x => x.Guid == guid).ToObjectAsync() ?? UserSession.Empty;
 
         public Task DeleteExpiredSessions(DateTime expired) => repository.DeleteAsync(x => x.ExpiredAt >= expired);
 

@@ -12,7 +12,6 @@
     <None Remove="Domain\Mapping\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
     <Folder Include="Domain\" />
     <Folder Include="Domain\Mapping\" />
   </ItemGroup>
