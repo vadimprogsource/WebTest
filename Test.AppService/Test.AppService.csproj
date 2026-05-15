@@ -15,7 +15,6 @@
     <None Remove="Infrastructure\CodeGen\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
     <Folder Include="Domain\" />
     <Folder Include="Domain\Fork\" />
     <Folder Include="Domain\Security\" />

@@ -48,13 +48,13 @@ namespace TestWebApi.Controllers
         [HttpPost]
         public virtual async Task<IActionResult> PostAsync([FromBody] FilterModel filter)
         {
-            if (filter.MaxCount < 1 || filter.MaxCount > 1000)
+            if (filter.PageSize < 1 || filter.PageSize > 1000)
             {
+                filter.PageIndex = 0;
                 filter.MaxCount = 50;
             }
 
-            TEntity[] entities = await Provider.GetByFilterAsync(filter);
-            return Models(entities);
+            return Models(await Provider.GetByFilterAsync(filter));
         }
 
 

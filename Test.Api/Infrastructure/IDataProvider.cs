@@ -2,7 +2,7 @@
 
 public interface IDataProvider<TEntity> where TEntity : IIdentity
 {
-    Task<TEntity[]> GetByFilterAsync(IFilterData filter);
+    Task<IDataPage<TEntity>> GetByFilterAsync(IFilterData filter);
     Task<TEntity> GetDataAsync(Guid guid);
 }
 

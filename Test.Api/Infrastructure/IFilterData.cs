@@ -2,7 +2,8 @@
 
 public interface IFilterData
 {
-    int MaxCount { get; }
+    int PageIndex { get; }
+    int PageSize { get; }
     string SearchPattern { get; }
 
 }
