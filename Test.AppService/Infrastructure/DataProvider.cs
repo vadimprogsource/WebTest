@@ -11,7 +11,7 @@ public class DataProvider<TInterface, TEntity>(IDataRepository<TEntity> reposito
     protected readonly IDataRepository<TEntity> Repository = repository;
 
 
-    public async Task<IDataPage<TInterface>> GetByFilterAsync(IFilterData filter)
+    public virtual async Task<IDataPage<TInterface>> GetByFilterAsync(IFilterData filter)
     {
 
         IQueryContext<TEntity> context = Repository.Context;
@@ -19,18 +19,14 @@ public class DataProvider<TInterface, TEntity>(IDataRepository<TEntity> reposito
         return (await DataPage<TEntity>.CreatePageAsync(context, filter.PageIndex, filter.PageSize)).Convert<TInterface>(x => x);
     }
 
-    public virtual async Task<TInterface> GetDataAsync(Guid guid) => await Repository.Context.FirstAsync(x=>x.Guid == guid);
-
+    public virtual async Task<TInterface> GetDataAsync(Guid guid)=> await Repository.Context.FirstAsync(x => x.Guid == guid);
+    
 
     protected virtual void ApplyFilter(IQueryContext<TEntity> context, IFilterData filter)
     {
-     
+
     }
 
-    Task<IDataPage<TInterface>> IDataProvider<TInterface>.GetByFilterAsync(IFilterData filter)
-    {
-        throw new NotImplementedException();
-    }
 }
 
 public class EntityDataProvider<TInterface, TEntity>(IDataRepository<TEntity> repository)

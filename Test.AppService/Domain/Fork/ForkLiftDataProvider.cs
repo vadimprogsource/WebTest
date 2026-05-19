@@ -5,14 +5,8 @@ using Test.Entity.Domain;
 
 namespace Test.AppService.Domain.Fork;
 
-public class ForkLiftDataProvider : EntityDataProvider<IForkLift, ForkLift>
+public class ForkLiftDataProvider(IDataRepository<ForkLift> repository) : EntityDataProvider<IForkLift, ForkLift>(repository)
 {
-
-
-    public ForkLiftDataProvider(IDataRepository<ForkLift> repository) : base(repository)
-    {
-    }
-
     protected override void ApplyFilter(IQueryContext<ForkLift> context, IFilterData filter)
     {
         if (!string.IsNullOrWhiteSpace(filter.SearchPattern))
