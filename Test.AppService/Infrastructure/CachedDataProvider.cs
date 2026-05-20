@@ -6,28 +6,28 @@ using Test.Api.Infrastructure;
 
 namespace Test.AppService.Infrastructure;
 
-public class CachedDataProvider<TInterface,TEntity>(IDataRepository<TEntity> repository , IDataCache<TEntity> cache) : DataProvider<TInterface,TEntity>(repository) where TInterface : IIdentity
+public class CachedDataProvider<TInterface,TEntity>(IDataRepository<TEntity> repository , IDataCacheProvider provider) : DataProvider<TInterface,TEntity>(repository) where TInterface : IIdentity
     where TEntity : class, TInterface
 {
-    protected IDataCache<TEntity> Cache = cache;
+    protected IDataCache<TEntity> Cache = provider.GetCache<TEntity>();
 
-    public async override Task<TInterface> GetDataAsync(Guid guid)
+    protected async override Task<TEntity> GetEntityAsync(Guid guid)
     {
         if (await Cache.TryGetDataAsync(guid, out TEntity obj))
         {
             return obj;
         }
 
-        return await base.GetDataAsync(guid);
+        return await Cache.AddAsync(await base.GetEntityAsync(guid));
     }
 
-    public async override Task<IDataPage<TInterface>> GetByFilterAsync(IFilterData filter)
+    protected async override Task<IDataPage<TEntity>> GetPageByFilterAsync(IFilterData filter)
     {
         if (await Cache.TryGetPageAsync(filter, out IDataPage<TEntity> page))
         {
-            return page.Convert<TInterface>(x => x);
+            return page;
         }
 
-        return await base.GetByFilterAsync(filter);
+        return await base.GetPageByFilterAsync(filter);
     }
 }

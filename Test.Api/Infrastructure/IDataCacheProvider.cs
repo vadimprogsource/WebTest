@@ -6,5 +6,5 @@ namespace Test.Api.Infrastructure;
 
 public interface IDataCacheProvider
 {
-    IDataCache<TEntity>? GetCache<TEntity>();
+    IDataCache<TEntity> GetCache<TEntity>();
 }
