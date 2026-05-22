@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1706.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11811.120 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebApi", "WebTestApi\TestWebApi.csproj", "{880E765E-B614-4DA6-A3BF-9EB4D92120E4}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.AppService", "Test.AppService\Test.AppService.csproj", "{85E25393-7F70-4692-ADEB-2AB45B491190}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Repository", "Test.Repository\Test.Repository.csproj", "{B106B4E0-A311-4FA9-95FF-B078225D4E5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Cache", "Test.Cache\Test.Cache.csproj", "{C3DA68FA-6E15-4034-A1B9-4D73B694F126}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{B106B4E0-A311-4FA9-95FF-B078225D4E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B106B4E0-A311-4FA9-95FF-B078225D4E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B106B4E0-A311-4FA9-95FF-B078225D4E5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3DA68FA-6E15-4034-A1B9-4D73B694F126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3DA68FA-6E15-4034-A1B9-4D73B694F126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3DA68FA-6E15-4034-A1B9-4D73B694F126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3DA68FA-6E15-4034-A1B9-4D73B694F126}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

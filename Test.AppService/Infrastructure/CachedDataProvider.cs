@@ -6,7 +6,7 @@ using Test.Api.Infrastructure;
 
 namespace Test.AppService.Infrastructure;
 
-public class CachedDataProvider<TInterface,TEntity>(IDataRepository<TEntity> repository , IDataCacheProvider provider) : DataProvider<TInterface,TEntity>(repository) where TInterface : IIdentity
+public abstract class CachedDataProvider<TInterface,TEntity>(IDataRepository<TEntity> repository , IDataCacheProvider provider) : DataProvider<TInterface,TEntity>(repository) where TInterface : IIdentity
     where TEntity : class, TInterface
 {
     protected IDataCache<TEntity> Cache = provider.GetCache<TEntity>();

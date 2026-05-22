@@ -9,10 +9,10 @@ using Test.AppService.Domain.Fault;
 using Test.AppService.Domain.Fork;
 using Test.AppService.Domain.Security;
 using Test.AppService.Infrastructure;
+using Test.Cache;
 using Test.Entity.Domain;
 using Test.Repository.Domain;
 using TestWebApi.Models;
-using TestWebApi.Provider;
 using TestWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +29,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 builder.Services.AddScoped<IAuthProvider, AuthProvider>();
 
-builder.Services.AddSingleton<IDataCacheProvider, EmptyDataCacheProvider>();
+builder.Services.AddSingleton<IDataCacheProvider, DataCacheProvider>();
 
 builder.Services.AddScoped<IDataRepository<User>, UserRepository>();
 builder.Services.AddScoped<IDataRepository<UserSession>, UserSessionRepository>();

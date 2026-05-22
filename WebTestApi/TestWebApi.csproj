@@ -40,6 +40,7 @@
     <ProjectReference Include="..\Test.AppService\Test.AppService.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Test.Cache\Test.Cache.csproj" />
     <ProjectReference Include="..\Test.Repository\Test.Repository.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
