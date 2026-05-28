@@ -18,7 +18,7 @@ public abstract class CachedDataProvider<TInterface,TEntity>(IDataRepository<TEn
             return obj;
         }
 
-        return await Cache.AddAsync(await base.GetEntityAsync(guid));
+        return await Cache.PutDataAsync(await base.GetEntityAsync(guid));
     }
 
     protected async override Task<IDataPage<TEntity>> GetPageByFilterAsync(IFilterData filter)
@@ -28,6 +28,6 @@ public abstract class CachedDataProvider<TInterface,TEntity>(IDataRepository<TEn
             return page;
         }
 
-        return await base.GetPageByFilterAsync(filter);
+        return await Cache.PutPageAsync(await base.GetPageByFilterAsync(filter));
     }
 }

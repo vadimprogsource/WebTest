@@ -33,13 +33,13 @@ public class DataCache<TEntity> : IDataCache<TEntity>
         this.expiration = expiration;
     }
 
-    public Task<TEntity> AddAsync(TEntity obj)
+    public Task<TEntity> PutDataAsync(TEntity obj)
     {
         cache[keyOf(obj)] = new DataCacheEntry<TEntity>(obj, expiration);
         return Task.FromResult(obj);
     }
 
-    public Task<IDataPage<TEntity>> AddPageAsync(IDataPage<TEntity> page)
+    public Task<IDataPage<TEntity>> PutPageAsync(IDataPage<TEntity> page)
     {
         foreach (TEntity obj in page)
         {
@@ -49,7 +49,7 @@ public class DataCache<TEntity> : IDataCache<TEntity>
         return Task.FromResult(page);
     }
 
-    public Task RemoveAsync(Guid guid)
+    public Task DeleteAsync(Guid guid)
     {
         cache.Remove(guid);
         return Task.CompletedTask;

@@ -47,7 +47,6 @@ namespace Test.AppService.Infrastructure
         {
             OnValidate(entity);
             return errors.Count < 1;
-            throw new NotImplementedException();
         }
 
         public IEnumerable<IError> Errors => errors;

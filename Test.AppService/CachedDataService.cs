@@ -15,18 +15,23 @@ public abstract class CachedDataService<TInterface, TEntity>(IDataRepository<TEn
 
     protected async override Task<TEntity> InsertNewAsync(TEntity entity)
     {
-        return await Cache.AddAsync( await base.InsertNewAsync(entity));
+        return await Cache.PutDataAsync( await base.InsertNewAsync(entity));
     }
 
     protected async override Task<TEntity> ApplyUpdateAsync(TEntity entity)
     {
-        return await Cache.AddAsync(await base.ApplyUpdateAsync(entity));
+        return await Cache.PutDataAsync(await base.ApplyUpdateAsync(entity));
     }
 
     public override async Task<bool> ExecuteDeleteAsync(Guid guid)
     {
-        await Cache.RemoveAsync(guid);
-        return await base.ExecuteDeleteAsync(guid);
+        if (await base.ExecuteDeleteAsync(guid))
+        {
+            await Cache.DeleteAsync(guid);
+            return true;
+        }
+   
+        return false;
     }
 
 }
