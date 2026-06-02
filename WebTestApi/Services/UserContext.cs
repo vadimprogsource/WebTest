@@ -1,4 +1,4 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.Security;
 using Test.Api.Infrastructure;
 
 namespace TestWebApi.Services

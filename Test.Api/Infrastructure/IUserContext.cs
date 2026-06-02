@@ -1,4 +1,4 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.Security;
 
 namespace Test.Api.Infrastructure
 {

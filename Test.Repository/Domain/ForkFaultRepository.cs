@@ -1,4 +1,4 @@
-﻿using Test.Entity.Domain;
+﻿using Test.Entity.Domain.App;
 using Test.Repository.Infrastructure;
 
 namespace Test.Repository.Domain

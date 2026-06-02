@@ -1,5 +1,5 @@
 ﻿using Test.Api;
-using Test.Api.Domain;
+using Test.Api.Domain.App;
 
 namespace TestWebApi.Models
 {

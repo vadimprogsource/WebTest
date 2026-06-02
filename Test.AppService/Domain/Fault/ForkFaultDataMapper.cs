@@ -1,6 +1,6 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.App;
 using Test.AppService.Infrastructure;
-using Test.Entity.Domain;
+using Test.Entity.Domain.App;
 
 namespace Test.AppService.Domain.Fault
 {

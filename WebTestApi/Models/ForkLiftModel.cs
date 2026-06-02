@@ -1,5 +1,6 @@
 ﻿using Test.Api;
-using Test.Api.Domain;
+using Test.Api.Domain.App;
+using Test.Api.Domain.Security;
 
 namespace TestWebApi.Models;
 

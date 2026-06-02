@@ -1,6 +1,6 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.Security;
 
-namespace Test.Entity.Domain
+namespace Test.Entity.Domain.Security
 {
     public class UserSession : EntityBase, IUserSession
     {

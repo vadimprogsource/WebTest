@@ -1,6 +1,8 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.App;
+using Test.Api.Domain.Security;
+using Test.Entity.Domain.Security;
 
-namespace Test.Entity.Domain
+namespace Test.Entity.Domain.App
 {
     public class ForkLift : EntityBase, IForkLift
     {

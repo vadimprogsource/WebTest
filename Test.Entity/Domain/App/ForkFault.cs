@@ -1,6 +1,6 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.App;
 
-namespace Test.Entity.Domain
+namespace Test.Entity.Domain.App
 {
     public class ForkFault : EntityBase, IForkFault
     {

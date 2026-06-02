@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Test.Api.Domain;
+using Test.Api.Domain.App;
 using TestWebApi.Models;
 
 namespace TestWebApi.Controllers

@@ -1,5 +1,5 @@
 ﻿using System.Buffers;
-using Test.Entity.Domain;
+using Test.Entity.Domain.Security;
 
 namespace Test.AppService.Domain.Security
 {

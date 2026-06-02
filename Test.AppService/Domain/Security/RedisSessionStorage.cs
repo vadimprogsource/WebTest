@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
-using Test.Api.Domain;
+using Test.Api.Domain.Security;
 using Test.Api.Infrastructure;
-using Test.Entity.Domain;
+using Test.Entity.Domain.Security;
 
 namespace Test.AppService.Domain.Security;
 

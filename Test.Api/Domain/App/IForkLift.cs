@@ -1,4 +1,6 @@
-﻿namespace Test.Api.Domain;
+﻿using Test.Api.Domain.Security;
+
+namespace Test.Api.Domain.App;
 
 
 public interface IForkLift : IEntity

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Test.Entity.Domain;
+using Test.Entity.Domain.App;
 
 namespace Test.Repository.Domain.Mapping
 {

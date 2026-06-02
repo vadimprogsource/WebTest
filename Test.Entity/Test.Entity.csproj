@@ -12,7 +12,4 @@
   <ItemGroup>
     <None Remove="Domain\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\" />
-  </ItemGroup>
 </Project>

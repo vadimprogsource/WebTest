@@ -1,4 +1,4 @@
-﻿namespace Test.Api.Domain
+﻿namespace Test.Api.Domain.Security
 {
     public interface IUserSession : IIdentity
     {

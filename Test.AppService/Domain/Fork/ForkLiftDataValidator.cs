@@ -1,4 +1,4 @@
-﻿using Test.Api.Domain;
+﻿using Test.Api.Domain.App;
 using Test.AppService.Infrastructure;
 
 namespace Test.AppService.Domain.Fork;

@@ -10,7 +10,4 @@
     <None Remove="Domain\" />
     <None Remove="Infrastructure\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\" />
-  </ItemGroup>
 </Project>
