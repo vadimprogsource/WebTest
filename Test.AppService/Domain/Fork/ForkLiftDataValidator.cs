@@ -1,5 +1,5 @@
 ﻿using Test.Api.Domain.App;
-using Test.AppService.Infrastructure;
+using Test.AppService.Infrastructure.Runtime;
 
 namespace Test.AppService.Domain.Fork;
 

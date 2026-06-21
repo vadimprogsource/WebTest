@@ -1,4 +1,4 @@
-﻿using Test.Api.Infrastructure;
+﻿using Test.Api.Infrastructure.Query;
 
 namespace Test.Api.Domain.App;
 

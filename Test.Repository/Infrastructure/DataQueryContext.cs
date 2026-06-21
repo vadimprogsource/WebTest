@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Query;
 
 namespace Test.Repository.Infrastructure;
 

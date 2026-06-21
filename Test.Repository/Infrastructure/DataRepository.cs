@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Test.Api;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Query;
+using Test.Api.Infrastructure.Repositories;
 
 namespace Test.Repository.Infrastructure
 {

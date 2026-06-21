@@ -1,6 +1,7 @@
 ﻿using Test.Api.Domain.App;
-using Test.Api.Infrastructure;
-using Test.AppService.Infrastructure;
+using Test.Api.Infrastructure.Query;
+using Test.Api.Infrastructure.Repositories;
+using Test.AppService.Infrastructure.Providers;
 using Test.Entity.Domain.App;
 
 namespace Test.AppService.Domain.Fault;

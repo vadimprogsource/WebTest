@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 using Test.Api.Domain.Security;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Providers;
 
 namespace TestWebApi.Services;
 

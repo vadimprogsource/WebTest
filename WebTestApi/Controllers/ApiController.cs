@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Test.Api;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Providers;
+using Test.Api.Infrastructure.Runtime;
+using Test.Api.Infrastructure.Services;
 using TestWebApi.Models;
 
 namespace TestWebApi.Controllers

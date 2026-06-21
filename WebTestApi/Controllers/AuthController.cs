@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Test.Api.Domain.Security;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Providers;
+using Test.Api.Infrastructure.Services;
 using TestWebApi.Models;
 using TestWebApi.Services;
 

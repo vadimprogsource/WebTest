@@ -1,5 +1,6 @@
 ﻿using Test.Api.Domain.Security;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Providers;
+using Test.Api.Infrastructure.Services;
 
 namespace TestWebApi.Services
 {

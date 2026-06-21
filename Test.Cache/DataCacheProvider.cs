@@ -1,4 +1,4 @@
-﻿using Test.Api.Infrastructure;
+﻿using Test.Api.Infrastructure.Providers;
 
 namespace Test.Cache
 {

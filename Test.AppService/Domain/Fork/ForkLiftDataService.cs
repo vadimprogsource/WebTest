@@ -1,6 +1,8 @@
 ﻿using Test.Api.Domain.App;
-using Test.Api.Infrastructure;
-using Test.AppService.Infrastructure;
+using Test.Api.Infrastructure.Repositories;
+using Test.Api.Infrastructure.Runtime;
+using Test.Api.Infrastructure.Services;
+using Test.AppService.Infrastructure.Services;
 using Test.Entity.Domain.App;
 using Test.Entity.Domain.Security;
 

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Test.Api;
-using Test.Api.Infrastructure;
+using Test.Api.Infrastructure.Providers;
+using Test.Api.Infrastructure.Query;
 
 namespace Test.Cache;
 
