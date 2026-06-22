@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Test.Api;
-using Test.Api.Infrastructure.Providers;
+using Test.Api.Infrastructure.Providers.Cache;
 using Test.Api.Infrastructure.Repositories;
 using Test.Api.Infrastructure.Runtime;
 

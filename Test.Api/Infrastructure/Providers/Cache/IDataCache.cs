@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Test.Api.Infrastructure.Query;
 
-namespace Test.Api.Infrastructure.Providers;
+namespace Test.Api.Infrastructure.Providers.Cache;
 
 public interface IDataCache<TEntity>
 {

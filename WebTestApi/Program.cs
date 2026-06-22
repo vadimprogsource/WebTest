@@ -5,6 +5,7 @@ using Microsoft.OpenApi;
 using StackExchange.Redis;
 using Test.Api.Domain.App;
 using Test.Api.Infrastructure.Providers;
+using Test.Api.Infrastructure.Providers.Cache;
 using Test.Api.Infrastructure.Repositories;
 using Test.Api.Infrastructure.Runtime;
 using Test.Api.Infrastructure.Services;
