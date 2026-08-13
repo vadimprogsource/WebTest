@@ -1,5 +1,5 @@
 # WebTest C4Model Architecture
-<img border="0" src="WebTest.png"> 
+<img border="0" src="Main.png"> 
 <br>
 The diagram illustrates a layered client-server architecture for a web application. A JavaScript frontend communicates with the backend through a secure REST API over HTTPS. The backend is hosted on an Application Server and processes incoming HTTP requests using an API Controller, which acts as the main entry point to the system.
 <br><br>
